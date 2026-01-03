@@ -33,6 +33,7 @@ import uk.chromis.globals.SystemProperty;
 import uk.chromis.pos.instance.AppMessage;
 import uk.chromis.pos.instance.InstanceManager;
 import uk.chromis.pos.util.OSValidator;
+import uk.chromis.pos.invoice.integration.ChromisPOSInvoiceIntegration;
 
 public class JRootFrame extends javax.swing.JFrame implements AppMessage {
 
@@ -78,6 +79,9 @@ public class JRootFrame extends javax.swing.JFrame implements AppMessage {
             pack();
             setLocationRelativeTo(null);
             setVisible(true);
+            
+            // Integración del módulo de facturación electrónica
+            ChromisPOSInvoiceIntegration.integrate(this);
         } 
 
         PARENTFRAME = this;
