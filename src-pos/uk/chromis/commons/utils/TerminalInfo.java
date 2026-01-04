@@ -41,12 +41,17 @@ public class TerminalInfo {
     protected static SentenceFind terminalActiveSession;
 
     static {
-        preferences = Preferences.systemRoot().node("chromis");
+        preferences = initPreferences();
         tuid = preferences.get(TERMINAL, null);
         if (tuid == null) {
             tuid = UUID.randomUUID().toString();
             preferences.put(TERMINAL, tuid);
         }
+    }
+
+    private static Preferences initPreferences() {
+        // Use user-level preferences to avoid permission issues on HKLM
+        return Preferences.userRoot().node("chromis");
     }
 
     public TerminalInfo() {

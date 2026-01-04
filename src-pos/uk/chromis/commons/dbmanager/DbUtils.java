@@ -24,6 +24,8 @@
 package uk.chromis.commons.dbmanager;
 
 import java.awt.Dimension;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -47,36 +49,39 @@ public class DbUtils {
     public static String getTerminalName() {
         String terminal = TerminalInfo.getTerminalName();
         if (terminal.equalsIgnoreCase("Unknown")) {
-            JAlertPane.messageBox(new Dimension(450, 250), JAlertPane.INFORMATION, AppLocal.getIntString("alert.noTerminalName"), 16,
-                    new Dimension(125, 50), JAlertPane.OK_OPTION);
-            System.exit(0);
-        } else {
             try {
-                PreparedStatement pstmt = connection.prepareStatement("select count(*) from terminals where terminal_key = ? ");
-                pstmt.setString(1, TerminalInfo.getTerminalID());
-                ResultSet rsTables = pstmt.executeQuery();
-                if (rsTables.next()) {
-                    if (rsTables.getInt(1) == 0) {
-                        pstmt = connection.prepareStatement("insert into terminals (id, terminal_name, terminal_key, terminal_location) values (?, ?, ?, ?)");
-                        pstmt.setString(1, TerminalInfo.getTerminalName());
-                        pstmt.setString(2, TerminalInfo.getTerminalName());
-                        pstmt.setString(3, TerminalInfo.getTerminalID());
-                        pstmt.setString(4, TerminalInfo.getLocation());
-                        pstmt.executeUpdate();
-                    } else {
-                        pstmt = connection.prepareStatement("update terminals set id = ?, terminal_name = ?, terminal_location = ? where  terminal_key = ?");
-                        pstmt.setString(1, TerminalInfo.getTerminalName());
-                        pstmt.setString(2, TerminalInfo.getTerminalName());
-                        pstmt.setString(3, TerminalInfo.getLocation());
-                        pstmt.setString(4, TerminalInfo.getTerminalID());
-                        pstmt.executeUpdate();
-                    }
-                }
-            } catch (SQLException ex) {
-
+                terminal = InetAddress.getLocalHost().getHostName();
+            } catch (UnknownHostException ex) {
+                terminal = "POS-" + TerminalInfo.getTerminalID().substring(0, Math.min(TerminalInfo.getTerminalID().length(), 8));
             }
-            AppConfig.put("terminalID", TerminalInfo.getTerminalName());
+            TerminalInfo.setTerminalName(terminal);
         }
+
+        try {
+            PreparedStatement pstmt = connection.prepareStatement("select count(*) from terminals where terminal_key = ? ");
+            pstmt.setString(1, TerminalInfo.getTerminalID());
+            ResultSet rsTables = pstmt.executeQuery();
+            if (rsTables.next()) {
+                if (rsTables.getInt(1) == 0) {
+                    pstmt = connection.prepareStatement("insert into terminals (id, terminal_name, terminal_key, terminal_location) values (?, ?, ?, ?)");
+                    pstmt.setString(1, TerminalInfo.getTerminalName());
+                    pstmt.setString(2, TerminalInfo.getTerminalName());
+                    pstmt.setString(3, TerminalInfo.getTerminalID());
+                    pstmt.setString(4, TerminalInfo.getLocation());
+                    pstmt.executeUpdate();
+                } else {
+                    pstmt = connection.prepareStatement("update terminals set id = ?, terminal_name = ?, terminal_location = ? where  terminal_key = ?");
+                    pstmt.setString(1, TerminalInfo.getTerminalName());
+                    pstmt.setString(2, TerminalInfo.getTerminalName());
+                    pstmt.setString(3, TerminalInfo.getLocation());
+                    pstmt.setString(4, TerminalInfo.getTerminalID());
+                    pstmt.executeUpdate();
+                }
+            }
+        } catch (SQLException ex) {
+
+        }
+        AppConfig.put("terminalID", TerminalInfo.getTerminalName());
         return AppConfig.getString("terminalID");
     }
 

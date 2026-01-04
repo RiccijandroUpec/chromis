@@ -193,8 +193,12 @@ public class SystemProperty {
         ICONCOLOUR = getString("ICONCOLOUR");
         LAF = getString("LAF");
         SCREENMODE = getString("SCREENMODE");
-        USERCOUNTRY = getString("USERCOUNTRY");
-        USERLANGUAGE = getString("USERLANGUAGE");
+        String country = getString("USERCOUNTRY");
+        String language = getString("USERLANGUAGE");
+
+        // Fallback sensible para instalaciones nuevas sin registros en systemproperties
+        USERCOUNTRY = (country == null || country.trim().isEmpty()) ? "EC" : country.trim();
+        USERLANGUAGE = (language == null || language.trim().isEmpty()) ? "es" : language.trim();
         USERVARIANT = getString("USERVARIANT");
 
         AMOUNTATTOP = getBoolean("AMOUNTATTOP");
@@ -323,7 +327,19 @@ public class SystemProperty {
 //        } else {
 //            TICKETSBAG = TerminalInfo.getPosType();
 //        }
-        Currency cur = Currency.getInstance(new Locale(USERLANGUAGE, USERCOUNTRY));
+        // Garantizar locale válida para moneda con fallback a Ecuador y USD si nada más funciona
+        Locale currencyLocale = new Locale(USERLANGUAGE, USERCOUNTRY);
+        Currency cur;
+        try {
+            cur = Currency.getInstance(currencyLocale);
+        } catch (IllegalArgumentException ex) {
+            try {
+                currencyLocale = new Locale("es", "EC");
+                cur = Currency.getInstance(currencyLocale);
+            } catch (IllegalArgumentException ex2) {
+                cur = Currency.getInstance("USD");
+            }
+        }
         CURRENCYSYMBOL = cur.getSymbol();
 
     }

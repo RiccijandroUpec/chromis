@@ -86,8 +86,12 @@ public class DatabaseValidator {
     }
 
     public Boolean validate(String propertiesFile) {
+        // Debug: log where we are looking for config
+        String configPath = currentDir + "/" + propertiesFile;
+        System.err.println("[DBVALIDATOR] user.dir=" + currentDir + " configPath=" + configPath);
         //Check if the properties file exists
-        File configFile = new File(currentDir + "/" + propertiesFile);
+        File configFile = new File(configPath);
+        System.err.println("[DBVALIDATOR] exists=" + configFile.exists() + " isDir=" + configFile.isDirectory());
         if (!configFile.exists() || configFile.isDirectory()) {
             showAlertDialog(DatabaseValidator.WARNING,
                     "\nUnable to find '" + propertiesFile + "' !\n",
@@ -121,11 +125,17 @@ public class DatabaseValidator {
         Boolean configGood = true;
         for (String s : new ArrayList<>(Arrays.asList("database.user", "database.password", "database.server", "database.port",
                 "database.name", "database.library", "database.class"))) {
-            if (config.containsKey(s)) {
-                if (config.getString(s, null) == null || config.getString(s).trim().isBlank()) {
-                    configGood = false;
-                }
-            } else {
+            if (!config.containsKey(s)) {
+                configGood = false;
+                continue;
+            }
+            String val = config.getString(s, "");
+            if (val == null) {
+                configGood = false;
+                continue;
+            }
+            // Allow empty password; other fields must be non-blank
+            if (!s.equals("database.password") && val.trim().isBlank()) {
                 configGood = false;
             }
         }
@@ -171,6 +181,16 @@ public class DatabaseValidator {
             waitForConnection.await();
         } catch (InterruptedException ex) {
         }
+
+        // Debug: print connection results
+        System.err.println("[DBVALIDATOR] connected=" + result[0]
+            + " empty=" + result[3]
+            + " version=" + result[4]
+            + " versionInt=" + result[5]
+            + " id=" + result[6]
+            + " name=" + result[7]
+            + " rowCount=" + result[8]
+            + " errMsg='" + result[1] + "'");
 
 //        System.out.println("\n*********************************************");
 //        System.out.println("Connected   : " + (Boolean) result[0]);
@@ -249,9 +269,15 @@ public class DatabaseValidator {
     }
 
     private static String getDatabasePassword() {
-        String sDBPassword = config.getString("database.password");
-        AltEncrypter cypher = new AltEncrypter("cypherkey" + config.getString("database.user"));
-        return cypher.decrypt(sDBPassword.substring(6));
+        String sDBPassword = config.getString("database.password", "");
+        if (sDBPassword == null || sDBPassword.isBlank()) {
+            return "";
+        }
+        if (sDBPassword.startsWith("crypt:")) {
+            AltEncrypter cypher = new AltEncrypter("cypherkey" + config.getString("database.user"));
+            return cypher.decrypt(sDBPassword.substring(6));
+        }
+        return sDBPassword;
     }
 
     private static void isDBEmpty() {

@@ -33,7 +33,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -41,8 +43,6 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.logging.Level;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.LookAndFeel;
@@ -57,6 +57,7 @@ import uk.chromis.globals.SystemProperty;
 import uk.chromis.commons.dbmanager.DbUtils;
 import uk.chromis.commons.dialogs.JAlertPane;
 import uk.chromis.commons.dialogs.WarningLogo;
+import uk.chromis.commons.utils.TerminalInfo;
 import uk.chromis.pos.repair.DatabaseRepair;
 
 public class StartPOS {
@@ -100,21 +101,15 @@ public class StartPOS {
             System.exit(0);
         }
 
-        String tuid = null;
-        String name = null;
-        try {
-            if (Preferences.systemRoot().nodeExists("chromis")) {
-                tuid = Preferences.systemRoot().node("chromis").get("$1308823401", null);
-                name = Preferences.systemRoot().node("chromis").get("posname", null);
+        String tuid = TerminalInfo.getTerminalID();
+        String name = TerminalInfo.getTerminalName();
+        if (name == null || name.equalsIgnoreCase("Unknown")) {
+            try {
+                name = InetAddress.getLocalHost().getHostName();
+            } catch (UnknownHostException ex) {
+                name = "POS-" + tuid.substring(0, Math.min(tuid.length(), 8));
             }
-        } catch (BackingStoreException ex) {
-            tuid = null;
-        }
-
-        if (tuid == null || name == null) {
-            JAlertPane.messageBox(new Dimension(460, 200), JAlertPane.NONE, "\nThis device has not been setup as a POS terminal,\ntherefore cannot run the POS application.\n\n"
-                    + "Please run 'TerminalConfig' to register the unit.", 16, new Dimension(125, 50), JAlertPane.OK_OPTION);
-            System.exit(0);
+            TerminalInfo.setTerminalName(name);
         }
 
         if (!registerApp()) {
@@ -158,25 +153,30 @@ public class StartPOS {
         IconFactory.cacheIconsFromZip("/iconsets/" + SystemProperty.ICONCOLOUR + ".zip");
         IconFactory.cacheIconsFromFolder("/images");
 
-        //tests if the database is lower version that the application
-        if (AppConfig.getVersionInt() < AppLocal.APP_VERSIONINT) {
-            AppConfig.putInt("application.versionint", AppConfig.getVersionInt());
+        // tests if the database is lower version than the application
+        int dbVersionInt = AppConfig.getVersionInt();
+        int appVersionInt = AppLocal.APP_VERSIONINT;
+
+        if (dbVersionInt < appVersionInt) {
+            AppConfig.putInt("application.versionint", dbVersionInt);
             AppConfig.put("application.version", AppConfig.getVersion());
-            // UpdatePanel update = new UpdatePanel();   
+            // UpdatePanel update = new UpdatePanel();
             JAlertPane.showAlertDialog(JAlertPane.WARNING,
-                    null,
-                    "\n  Chromis database needs to be updated.",
-                    "  Please run 'Chromis Administration' to update system.",
-                    JAlertPane.OK_OPTION, true);
+                null,
+                "\n  Chromis database needs to be updated.",
+                "  Please run 'Chromis Administration' to update system.",
+                JAlertPane.OK_OPTION, true);
             System.exit(0);
         }
 
-        if (AppConfig.getVersionInt() != AppLocal.APP_VERSIONINT) {
+        if (dbVersionInt != appVersionInt) {
+            System.err.println("DB versionInt=" + dbVersionInt + " app versionInt=" + appVersionInt);
+            System.err.println("DB version=" + AppConfig.getVersion() + " app version=" + AppLocal.APP_VERSION);
             JAlertPane.showAlertDialog(JAlertPane.WARNING,
-                    null,
-                    " Versions do not match !!",
-                    "\n The Chromis database and this application versions do not match. ",
-                    JAlertPane.OK_OPTION, true);
+                null,
+                " Versions do not match !!",
+                "\n The Chromis database and this application versions do not match. ",
+                JAlertPane.OK_OPTION, true);
             System.exit(0);
         }
 

@@ -42,6 +42,7 @@ public class ConnectionPoolFactory {
         
         comboPooledDataSource.setJdbcUrl(AppConfig.getDatabaseURL());
         comboPooledDataSource.setUser(AppConfig.getDatabaseUser());
+        // Accept plain or encrypted password
         comboPooledDataSource.setPassword(AppConfig.getClearDatabasePassword());
         comboPooledDataSource.setMinPoolSize(2);
         comboPooledDataSource.setAcquireIncrement(2);
