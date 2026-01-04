@@ -348,3 +348,45 @@
 PRÓXIMO PASO: Lee QUICK_START.md para comenzar en 5 minutos
 
 ════════════════════════════════════════════════════════════════════════════════
+
+README.md (mejorado)
+
+# ChromisPOS Facturación Electrónica
+
+Este repositorio extiende ChromisPOS con integración de facturación electrónica para Ecuador, compatible con SRI y certificado digital.
+
+## Resumen
+- ChromisPOS es un sistema de punto de venta (POS) multiplataforma, con soporte para inventario, ventas, clientes, reportes y administración.
+- Este proyecto agrega el módulo de facturación electrónica, permitiendo emitir comprobantes electrónicos, firmar con certificado digital (PFX/P12), enviar al SRI y gestionar el estado de los documentos.
+- Incluye scripts para crear el esquema de facturación electrónica en la base de datos, configuración de conexión a MariaDB/MySQL, y panel gráfico para cargar el certificado y clave.
+- Compatible con Windows 10/11, Linux, Java 11+, MariaDB/MySQL 8+.
+
+## Características principales
+- Integración completa con el menú de ChromisPOS: Nueva Factura, Mis Facturas, Configuración, Estado del Módulo.
+- Panel gráfico para cargar certificado digital y clave.
+- Generación y firma de XML conforme a SRI.
+- Envío automático de comprobantes electrónicos.
+- Registro y consulta de facturas electrónicas.
+- Scripts para inicializar y reparar el esquema de facturación electrónica.
+- Soporte para configuración avanzada en chromisposconfig.properties y chromispos-invoice.properties.
+
+## Instalación rápida
+1. Instala MariaDB/MySQL y crea la base de datos.
+2. Clona este repositorio.
+3. Configura chromisposconfig.properties con tus datos de conexión.
+4. Ejecuta los scripts SQL para crear las tablas de facturación electrónica.
+5. Ejecuta run_chromispos.bat con Java 11+.
+6. Ingresa a Venta → Facturación Electrónica → Configuración para cargar tu certificado digital.
+
+## Requisitos
+- Java 11 o superior
+- MariaDB/MySQL 8.0.23+
+- Certificado digital (PFX/P12) válido para SRI
+- Sistema operativo Windows o Linux
+
+## Créditos
+Basado en ChromisPOS y extendido por RiccijandroUpec.
+
+---
+
+¿Quieres agregar instrucciones específicas de facturación electrónica, imágenes o ejemplos de uso? Dímelo y lo incluyo.

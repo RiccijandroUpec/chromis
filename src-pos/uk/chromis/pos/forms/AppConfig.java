@@ -149,11 +149,15 @@ public class AppConfig implements AppProperties {
 
     public static String getClearDatabasePassword() {
         String sDBPassword = getDatabasePassword();
-        if (getDatabaseUser() != null && sDBPassword != null && sDBPassword.startsWith("crypt:")) {
+        if (sDBPassword == null) {
+            return null;
+        }
+        if (sDBPassword.startsWith("crypt:")) {
             AltEncrypter cypher = new AltEncrypter("cypherkey" + getDatabaseUser());
             return cypher.decrypt(sDBPassword.substring(6));
         }
-        return null;
+        // Allow plain-text password fallback
+        return sDBPassword;
     }
 
     public static void setDatabasePassword(String password) {
