@@ -5,28 +5,40 @@ import java.math.BigInteger;
 /**
  * Utilidad para generar claves de acceso SRI
  * Clave de acceso: 49 dígitos
- * Formato: FFFFPPDDDDDDDDDDDDDDDRRRRRRRRRRRRRAAAADDDD
- * F: Fecha (DDMMYYYY - 8 dígitos)
- * P: Tipo de comprobante (2 dígitos)
- * D: Número de RUC del emisor (13 dígitos)
- * R: Número secuencial (9 dígitos)
- * A: Código de autorización (4 dígitos)
- * D: Dígito verificador (1 dígito)
+ * Formato: DDMMYYYY(8) + tipoComprobante(2) + RUC(13) + tipoAmbiente(1) + serie(6) + secuencial(9) + codigoNumerico(8) + tipoEmision(1) + digitoVerificador(1)
  */
 public class AccessKeyGenerator {
     
     /**
-     * Genera la clave de acceso SRI
+     * Genera la clave de acceso SRI de 49 dígitos
+     * @param date fecha de emisión en formato dd/MM/yyyy o yyyy-MM-dd
+     * @param documentType tipo de comprobante (ej. "01" = factura)
+     * @param ruc RUC del emisor (13 dígitos)
+     * @param environment tipo de ambiente: "1" = pruebas, "2" = producción
+     * @param serie serie del comprobante (establecimiento 3 + puntoEmision 3, ej. "001001")
+     * @param sequentialNumber número secuencial (9 dígitos)
+     * @param numericCode código numérico aleatorio (8 dígitos)
+     * @param emissionType tipo de emisión: "1" = normal
      */
-    public static String generateAccessKey(String date, String documentType, String ruc, 
-                                          String sequentialNumber, String authorizationCode) {
-        // Formato: FFFFPPDDDDDDDDDDDDDDDRRRRRRRRRRRRRAAAADDDD
-        // Reemplazar FF por 01 para facturas
-        String baseKey = formatDate(date) + 
-                        documentType + 
-                        padLeft(ruc, 13, '0') + 
-                        padLeft(sequentialNumber, 9, '0') + 
-                        padLeft(authorizationCode, 4, '0');
+    public static String generateAccessKey(String date, String documentType, String ruc,
+                                           String environment, String serie,
+                                           String sequentialNumber, String numericCode,
+                                           String emissionType) {
+        if (!"1".equals(environment) && !"2".equals(environment)) {
+            throw new IllegalArgumentException("environment debe ser '1' (pruebas) o '2' (producción)");
+        }
+        if (!"1".equals(emissionType)) {
+            throw new IllegalArgumentException("emissionType debe ser '1' (normal)");
+        }
+        // Formato: DDMMYYYY(8) + tipoComp(2) + RUC(13) + ambiente(1) + serie(6) + secuencial(9) + codNumerico(8) + tipoEmision(1)
+        String baseKey = formatDate(date) +
+                        padLeft(documentType, 2, '0') +
+                        padLeft(ruc, 13, '0') +
+                        environment +
+                        padLeft(serie, 6, '0') +
+                        padLeft(sequentialNumber, 9, '0') +
+                        padLeft(numericCode, 8, '0') +
+                        emissionType;
         
         // Calcular dígito verificador
         String verifierDigit = calculateVerifierDigit(baseKey);

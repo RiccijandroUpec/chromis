@@ -19,6 +19,7 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Servicio para generar el XML de factura electrónica según especificaciones SRI
@@ -26,6 +27,8 @@ import java.time.format.DateTimeFormatter;
 public class InvoiceXMLGenerator {
     
     private static final String DOCUMENTO_TYPE = "01"; // 01 = Factura
+    private static final String ESTAB = "001";         // Establecimiento
+    private static final String PTO_EMI = "001";       // Punto de emisión
     
     /**
      * Genera el XML de la factura electrónica
@@ -68,12 +71,17 @@ public class InvoiceXMLGenerator {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String date = invoice.getIssueDate().format(dateFormatter);
         
+        // Generar código numérico aleatorio de 8 dígitos (0–99999999)
+        String numericCode = String.format("%08d", ThreadLocalRandom.current().nextInt(0, 99999999 + 1));
         String accessKey = AccessKeyGenerator.generateAccessKey(
             date,
             DOCUMENTO_TYPE,
             invoice.getIssuer().getRuc(),
+            "1",              // tipoAmbiente: 1=Pruebas, 2=Producción
+            ESTAB + PTO_EMI,  // serie: establecimiento + puntoEmision
             invoice.getInvoiceNumber(),
-            "0001" // Código de autorización
+            numericCode,
+            "1"         // tipoEmision: 1=Normal
         );
         
         invoice.setAccessKey(accessKey);
@@ -93,8 +101,8 @@ public class InvoiceXMLGenerator {
             addElement(doc, element, "ruc", invoice.getIssuer().getRuc());
             addElement(doc, element, "claveAcceso", invoice.getAccessKey());
             addElement(doc, element, "codDoc", DOCUMENTO_TYPE);
-            addElement(doc, element, "estab", "001");
-            addElement(doc, element, "ptoEmi", "001");
+            addElement(doc, element, "estab", ESTAB);
+            addElement(doc, element, "ptoEmi", PTO_EMI);
             addElement(doc, element, "secuencial", invoice.getInvoiceNumber());
             addElement(doc, element, "dirMatriz", invoice.getIssuer().getAddress());
         } else if ("infoFactura".equals(elementName)) {
