@@ -20,12 +20,53 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
 /**
  * Servicio para generar el XML de factura electrónica según especificaciones SRI
  */
 public class InvoiceXMLGenerator {
     
     private static final String DOCUMENTO_TYPE = "01"; // 01 = Factura
+    
+    private Map<String, String> taxMappings;
+    
+    public InvoiceXMLGenerator() {
+        taxMappings = new HashMap<>();
+        loadTaxMappings();
+    }
+    
+    private void loadTaxMappings() {
+        try {
+            Properties props = new Properties();
+            File f = new File("chromisposconfig.properties");
+            if (f.exists()) {
+                props.load(new FileInputStream(f));
+                String mappings = props.getProperty("invoice.tax.mappings", "0:0,12:2,14:3,15:4,5:5");
+                String[] pairs = mappings.split(",");
+                for (String pair : pairs) {
+                    String[] kv = pair.split(":");
+                    if (kv.length == 2) {
+                        taxMappings.put(kv[0].trim(), kv[1].trim());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // Valores por defecto de seguridad (Ficha Técnica SRI Marzo 2024)
+        if (taxMappings.isEmpty()) {
+            taxMappings.put("0", "0");
+            taxMappings.put("12", "2");
+            taxMappings.put("14", "3");
+            taxMappings.put("15", "4");
+            taxMappings.put("5", "5");
+        }
+    }
     
     /**
      * Genera el XML de la factura electrónica
@@ -157,13 +198,26 @@ public class InvoiceXMLGenerator {
     private void addTotalesElement(Document doc, Element parent, ElectronicInvoice invoice) {
         Element totales = doc.createElement("totalConImpuestos");
         
-        Element totalImpuesto = doc.createElement("totalImpuesto");
-        addElement(doc, totalImpuesto, "codigo", "2"); // 2 = IVA
-        addElement(doc, totalImpuesto, "codigoPorcentaje", "3"); // 3 = 12%
-        addElement(doc, totalImpuesto, "baseImponible", formatAmount(invoice.getSubtotal()));
-        addElement(doc, totalImpuesto, "valor", formatAmount(invoice.getIvaTotal()));
+        // Agrupar totales por código de impuesto
+        Map<String, BigDecimal[]> taxesByCode = new HashMap<>();
         
-        totales.appendChild(totalImpuesto);
+        for (InvoiceDetail detail : invoice.getDetails()) {
+            String taxCode = getTaxRateCode(detail.getTaxRate());
+            BigDecimal[] amounts = taxesByCode.getOrDefault(taxCode, new BigDecimal[]{BigDecimal.ZERO, BigDecimal.ZERO});
+            amounts[0] = amounts[0].add(detail.getLineTotal()); // base imponible
+            amounts[1] = amounts[1].add(calculateTaxAmount(detail.getLineTotal(), detail.getTaxRate())); // valor impuesto
+            taxesByCode.put(taxCode, amounts);
+        }
+        
+        for (Map.Entry<String, BigDecimal[]> entry : taxesByCode.entrySet()) {
+            Element totalImpuesto = doc.createElement("totalImpuesto");
+            addElement(doc, totalImpuesto, "codigo", "2"); // 2 = IVA
+            addElement(doc, totalImpuesto, "codigoPorcentaje", entry.getKey()); 
+            addElement(doc, totalImpuesto, "baseImponible", formatAmount(entry.getValue()[0]));
+            addElement(doc, totalImpuesto, "valor", formatAmount(entry.getValue()[1]));
+            totales.appendChild(totalImpuesto);
+        }
+        
         parent.appendChild(totales);
     }
     
@@ -228,16 +282,24 @@ public class InvoiceXMLGenerator {
     }
     
     /**
-     * Obtiene el código de porcentaje de IVA según la tasa
+     * Obtiene el código de porcentaje de IVA según la tasa cargada desde la configuración
      */
     private String getTaxRateCode(BigDecimal rate) {
-        if (rate.compareTo(BigDecimal.ZERO) == 0) {
-            return "0"; // 0%
-        } else if (rate.compareTo(new BigDecimal("5")) == 0) {
-            return "2"; // 5%
-        } else if (rate.compareTo(new BigDecimal("12")) == 0) {
-            return "3"; // 12%
+        if (rate == null) return "2"; // Por defecto 12% antiguo como fallback general
+        
+        // Convertimos la tasa a String sin decimales extraños (ej: 12.00 -> 12)
+        String rateStr = rate.stripTrailingZeros().toPlainString();
+        
+        // Si existe en el mapeo dinámico, retornarlo
+        if (taxMappings.containsKey(rateStr)) {
+            return taxMappings.get(rateStr);
         }
-        return "3"; // Por defecto 12%
+        
+        // Si por alguna razón no está mapeado, asumir comportamiento por defecto
+        if (rate.compareTo(BigDecimal.ZERO) == 0) return "0";
+        if (rate.compareTo(new BigDecimal("15")) == 0) return "4";
+        if (rate.compareTo(new BigDecimal("5")) == 0) return "5";
+        
+        return "2"; // Por defecto 12% (Código 2) si no hay mapeo válido.
     }
 }

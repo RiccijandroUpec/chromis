@@ -15,6 +15,10 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.Properties;
+
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -25,7 +29,8 @@ import java.time.format.DateTimeFormatter;
  */
 public class InvoiceXMLGenerator {
     
-    private static final String DOCUMENTO_TYPE = "01"; // 01 = Factura
+    private static final String DOCUMENTO_TYPE_FACTURA = "01"; // 01 = Factura
+    private static final String DOCUMENTO_TYPE_NOTA_CREDITO = "04"; // 04 = Nota de Crédito
     
     /**
      * Genera el XML de la factura electrónica
@@ -42,16 +47,22 @@ public class InvoiceXMLGenerator {
         Document doc = db.newDocument();
         
         // Elemento raíz
-        Element root = doc.createElement("factura");
+        String rootName = "04".equals(invoice.getDocumentType()) ? "notaCredito" : "factura";
+        Element root = doc.createElement(rootName);
         root.setAttribute("version", "1.0.0");
         doc.appendChild(root);
         
         // Información general
         addInfoElement(doc, root, "infoTributaria", invoice);
-        addInfoElement(doc, root, "infoFactura", invoice);
+        String infoName = "04".equals(invoice.getDocumentType()) ? "infoNotaCredito" : "infoFactura";
+        addInfoElement(doc, root, infoName, invoice);
         addDetallesElement(doc, root, invoice);
-        addTotalesElement(doc, root, invoice);
-        addPagosElement(doc, root, invoice);
+        
+        if ("01".equals(invoice.getDocumentType())) {
+            // En la nota de crédito, los totales van dentro de infoNotaCredito, y no hay pagos
+            addTotalesElement(doc, root, invoice);
+            addPagosElement(doc, root, invoice);
+        }
         
         // Convertir documento a String
         String xml = documentToString(doc);
@@ -68,12 +79,25 @@ public class InvoiceXMLGenerator {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String date = invoice.getIssueDate().format(dateFormatter);
         
+        String environment = "1";
+        try {
+            java.util.Properties props = new java.util.Properties();
+            java.io.File f = new java.io.File("chromisposconfig.properties");
+            if (f.exists()) {
+                props.load(new java.io.FileInputStream(f));
+                environment = props.getProperty("invoice.environment", "1");
+            }
+        } catch (Exception e) {}
+
         String accessKey = AccessKeyGenerator.generateAccessKey(
             date,
-            DOCUMENTO_TYPE,
+            invoice.getDocumentType() != null ? invoice.getDocumentType() : DOCUMENTO_TYPE_FACTURA,
             invoice.getIssuer().getRuc(),
+            environment, // 1 Pruebas, 2 Producción
+            "001001", // Estab + PtoEmi
             invoice.getInvoiceNumber(),
-            "0001" // Código de autorización
+            "12345678", // Código Numérico
+            "1" // Tipo Emisión (1 Normal)
         );
         
         invoice.setAccessKey(accessKey);
@@ -86,20 +110,29 @@ public class InvoiceXMLGenerator {
         Element element = doc.createElement(elementName);
         
         if ("infoTributaria".equals(elementName)) {
-            addElement(doc, element, "ambiente", "1"); // 1 = Producción, 2 = Pruebas
+            String ambiente = "1";
+            try {
+                Properties props = new Properties();
+                File f = new File("chromisposconfig.properties");
+                if (f.exists()) {
+                    props.load(new FileInputStream(f));
+                    ambiente = props.getProperty("invoice.environment", "1");
+                }
+            } catch (Exception e) {}
+            
+            addElement(doc, element, "ambiente", ambiente); // 1 = Pruebas, 2 = Producción
             addElement(doc, element, "tipoEmision", "1"); // 1 = Normal
             addElement(doc, element, "razonSocial", invoice.getIssuer().getBusinessName());
             addElement(doc, element, "nombreComercial", invoice.getIssuer().getTradeName());
             addElement(doc, element, "ruc", invoice.getIssuer().getRuc());
             addElement(doc, element, "claveAcceso", invoice.getAccessKey());
-            addElement(doc, element, "codDoc", DOCUMENTO_TYPE);
+            addElement(doc, element, "codDoc", invoice.getDocumentType() != null ? invoice.getDocumentType() : DOCUMENTO_TYPE_FACTURA);
             addElement(doc, element, "estab", "001");
             addElement(doc, element, "ptoEmi", "001");
             addElement(doc, element, "secuencial", invoice.getInvoiceNumber());
             addElement(doc, element, "dirMatriz", invoice.getIssuer().getAddress());
         } else if ("infoFactura".equals(elementName)) {
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
             
             addElement(doc, element, "fechaEmision", invoice.getIssueDate().format(dateFormatter));
             addElement(doc, element, "dirEstablecimiento", invoice.getIssuer().getAddress());
@@ -109,10 +142,46 @@ public class InvoiceXMLGenerator {
             addElement(doc, element, "identificacionComprador", invoice.getBuyer().getIdentification());
             addElement(doc, element, "totalSinImpuestos", formatAmount(invoice.getSubtotal()));
             addElement(doc, element, "totalDescuento", "0.00");
-            addElement(doc, element, "totalConImpuestos", formatAmount(invoice.getTotal()));
+            
+            // totals element here for factura
+            Element totales = doc.createElement("totalConImpuestos");
+            Element totalImpuesto = doc.createElement("totalImpuesto");
+            addElement(doc, totalImpuesto, "codigo", "2"); // 2 = IVA
+            addElement(doc, totalImpuesto, "codigoPorcentaje", "3"); // 3 = 12%
+            addElement(doc, totalImpuesto, "baseImponible", formatAmount(invoice.getSubtotal()));
+            addElement(doc, totalImpuesto, "valor", formatAmount(invoice.getIvaTotal()));
+            totales.appendChild(totalImpuesto);
+            element.appendChild(totales);
+            
             addElement(doc, element, "propina", "0.00");
             addElement(doc, element, "importeTotal", formatAmount(invoice.getTotal()));
             addElement(doc, element, "moneda", "USD");
+        } else if ("infoNotaCredito".equals(elementName)) {
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            
+            addElement(doc, element, "fechaEmision", invoice.getIssueDate().format(dateFormatter));
+            addElement(doc, element, "dirEstablecimiento", invoice.getIssuer().getAddress());
+            addElement(doc, element, "tipoIdentificacionComprador", invoice.getBuyer().getIdentificationType());
+            addElement(doc, element, "razonSocialComprador", invoice.getBuyer().getBusinessName());
+            addElement(doc, element, "identificacionComprador", invoice.getBuyer().getIdentification());
+            addElement(doc, element, "obligadoContabilidad", "SI");
+            addElement(doc, element, "codDocModificado", "01"); // Siempre anula facturas
+            addElement(doc, element, "numDocModificado", "001-001-" + invoice.getModifiedDocumentNumber()); // Formato serie-estab-secuencial
+            addElement(doc, element, "fechaEmisionDocSustento", invoice.getModifiedDocumentIssueDate() != null ? invoice.getModifiedDocumentIssueDate().format(dateFormatter) : invoice.getIssueDate().format(dateFormatter));
+            addElement(doc, element, "totalSinImpuestos", formatAmount(invoice.getSubtotal()));
+            addElement(doc, element, "valorModificacion", formatAmount(invoice.getTotal()));
+            addElement(doc, element, "moneda", "USD");
+            
+            Element totales = doc.createElement("totalConImpuestos");
+            Element totalImpuesto = doc.createElement("totalImpuesto");
+            addElement(doc, totalImpuesto, "codigo", "2"); // 2 = IVA
+            addElement(doc, totalImpuesto, "codigoPorcentaje", "3"); // 3 = 12%
+            addElement(doc, totalImpuesto, "baseImponible", formatAmount(invoice.getSubtotal()));
+            addElement(doc, totalImpuesto, "valor", formatAmount(invoice.getIvaTotal()));
+            totales.appendChild(totalImpuesto);
+            element.appendChild(totales);
+            
+            addElement(doc, element, "motivo", invoice.getModificationReason() != null ? invoice.getModificationReason() : "Anulación de Factura");
         }
         
         parent.appendChild(element);
@@ -152,19 +221,10 @@ public class InvoiceXMLGenerator {
     }
     
     /**
-     * Agrega totales
+     * Agrega totales (Sólo para Factura, ya no se usa, lo metimos dentro de infoFactura)
      */
     private void addTotalesElement(Document doc, Element parent, ElectronicInvoice invoice) {
-        Element totales = doc.createElement("totalConImpuestos");
-        
-        Element totalImpuesto = doc.createElement("totalImpuesto");
-        addElement(doc, totalImpuesto, "codigo", "2"); // 2 = IVA
-        addElement(doc, totalImpuesto, "codigoPorcentaje", "3"); // 3 = 12%
-        addElement(doc, totalImpuesto, "baseImponible", formatAmount(invoice.getSubtotal()));
-        addElement(doc, totalImpuesto, "valor", formatAmount(invoice.getIvaTotal()));
-        
-        totales.appendChild(totalImpuesto);
-        parent.appendChild(totales);
+        // Obsoleto: movido a infoFactura
     }
     
     /**

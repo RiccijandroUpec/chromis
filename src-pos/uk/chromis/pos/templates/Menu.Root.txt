@@ -8,3 +8,7 @@ group = menu.addGroup("menu.main");
 	group.addPanel("printer.png", "menu.printer", "uk.chromis.pos.panels.JPanelPrinter");
     	group.addPanel("timer.png", "menu.checkInCheckOut", "uk.chromis.pos.epm.JPanelEmployeePresence");
 
+// ECUADOR SRI
+group = menu.addGroup("Configuración ChromisEC");
+        group.addPanel("config.png", "Configuración SRI", "uk.chromis.pos.setup.JPanelConfigEcuador");
+        group.addPanel("sales_print.png", "Gestión Facturas SRI", "uk.chromis.pos.invoice.forms.InvoiceListPanel");

@@ -5,12 +5,15 @@ import java.math.BigInteger;
 /**
  * Utilidad para generar claves de acceso SRI
  * Clave de acceso: 49 dígitos
- * Formato: FFFFPPDDDDDDDDDDDDDDDRRRRRRRRRRRRRAAAADDDD
+ * Formato: FFPPDDDDDDDDDDDDDDAEEEEEEESSSSSSSSSCCCCCCCCE
  * F: Fecha (DDMMYYYY - 8 dígitos)
  * P: Tipo de comprobante (2 dígitos)
  * D: Número de RUC del emisor (13 dígitos)
- * R: Número secuencial (9 dígitos)
- * A: Código de autorización (4 dígitos)
+ * A: Ambiente (1 dígito)
+ * E: Serie (Estab + PtoEmi) (6 dígitos)
+ * S: Número secuencial (9 dígitos)
+ * C: Código numérico (8 dígitos)
+ * E: Tipo emisión (1 dígito)
  * D: Dígito verificador (1 dígito)
  */
 public class AccessKeyGenerator {
@@ -19,14 +22,17 @@ public class AccessKeyGenerator {
      * Genera la clave de acceso SRI
      */
     public static String generateAccessKey(String date, String documentType, String ruc, 
-                                          String sequentialNumber, String authorizationCode) {
-        // Formato: FFFFPPDDDDDDDDDDDDDDDRRRRRRRRRRRRRAAAADDDD
-        // Reemplazar FF por 01 para facturas
+                                          String environment, String series, String sequentialNumber, 
+                                          String numericCode, String emissionType) {
+        
         String baseKey = formatDate(date) + 
-                        documentType + 
+                        padLeft(documentType, 2, '0') + 
                         padLeft(ruc, 13, '0') + 
+                        environment + 
+                        padLeft(series, 6, '0') +
                         padLeft(sequentialNumber, 9, '0') + 
-                        padLeft(authorizationCode, 4, '0');
+                        padLeft(numericCode, 8, '0') +
+                        emissionType;
         
         // Calcular dígito verificador
         String verifierDigit = calculateVerifierDigit(baseKey);

@@ -18,6 +18,13 @@ public class ElectronicInvoice implements Serializable {
     private LocalDateTime issueDate;
     private LocalDateTime issueTime;
     
+    // Tipos de Documento y Notas de Crédito
+    private String documentType = "01"; // 01 = Factura, 04 = Nota de Crédito
+    private String modifiedDocumentType;
+    private String modifiedDocumentNumber;
+    private LocalDateTime modifiedDocumentIssueDate;
+    private String modificationReason;
+    
     // Información del emisor
     private InvoiceIssuer issuer;
     
@@ -212,5 +219,45 @@ public class ElectronicInvoice implements Serializable {
     
     public void setSriResponse(String sriResponse) {
         this.sriResponse = sriResponse;
+    }
+
+    public String getDocumentType() {
+        return documentType;
+    }
+
+    public void setDocumentType(String documentType) {
+        this.documentType = documentType;
+    }
+
+    public String getModifiedDocumentType() {
+        return modifiedDocumentType;
+    }
+
+    public void setModifiedDocumentType(String modifiedDocumentType) {
+        this.modifiedDocumentType = modifiedDocumentType;
+    }
+
+    public String getModifiedDocumentNumber() {
+        return modifiedDocumentNumber;
+    }
+
+    public void setModifiedDocumentNumber(String modifiedDocumentNumber) {
+        this.modifiedDocumentNumber = modifiedDocumentNumber;
+    }
+
+    public LocalDateTime getModifiedDocumentIssueDate() {
+        return modifiedDocumentIssueDate;
+    }
+
+    public void setModifiedDocumentIssueDate(LocalDateTime modifiedDocumentIssueDate) {
+        this.modifiedDocumentIssueDate = modifiedDocumentIssueDate;
+    }
+
+    public String getModificationReason() {
+        return modificationReason;
+    }
+
+    public void setModificationReason(String modificationReason) {
+        this.modificationReason = modificationReason;
     }
 }

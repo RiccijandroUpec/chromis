@@ -184,51 +184,11 @@ public class StartPOS {
         p.put("windowDecoration", "off");
         p.put("logoString", "");
 
-        switch (SystemProperty.LAF) {
-            case "com.jtattoo.plaf.acryl.AcrylLookAndFeel":
-                com.jtattoo.plaf.acryl.AcrylLookAndFeel.setCurrentTheme(p);
-                break;
-            case "com.jtattoo.plaf.aero.AeroLookAndFeel":
-                com.jtattoo.plaf.aero.AeroLookAndFeel.setCurrentTheme(p);
-                break;
-            case "com.jtattoo.plaf.aluminium.AluminiumLookAndFeel":
-                com.jtattoo.plaf.aluminium.AluminiumLookAndFeel.setCurrentTheme(p);
-                break;
-            case "com.jtattoo.plaf.fast.FastLookAndFeel":
-                com.jtattoo.plaf.fast.FastLookAndFeel.setCurrentTheme(p);
-                break;
-            case "com.jtattoo.plaf.graphite.GraphiteLookAndFeel":
-                com.jtattoo.plaf.graphite.GraphiteLookAndFeel.setCurrentTheme(p);
-                break;
-            case "com.jtattoo.plaf.hifi.HiFiLookAndFeel":
-                com.jtattoo.plaf.hifi.HiFiLookAndFeel.setCurrentTheme(p);
-                break;
-            case "com.jtattoo.plaf.mcwin.McWinLookAndFeel":
-                com.jtattoo.plaf.mcwin.McWinLookAndFeel.setCurrentTheme(p);
-                break;
-            case "com.jtattoo.plaf.mint.MintLookAndFeel":
-                com.jtattoo.plaf.mint.MintLookAndFeel.setCurrentTheme(p);
-                break;
-            case "com.jtattoo.plaf.noire.NoireLookAndFeel":
-                com.jtattoo.plaf.noire.NoireLookAndFeel.setCurrentTheme(p);
-                break;
-            case "com.jtattoo.plaf.smart.SmartLookAndFeel":
-                com.jtattoo.plaf.smart.SmartLookAndFeel.setCurrentTheme(p);
-                break;
-            case "com.jtattoo.plaf.texture.TextureLookAndFeel":
-                com.jtattoo.plaf.texture.TextureLookAndFeel.setCurrentTheme(p);
-                break;
-        }
-
+        // Modern Look And Feel (FlatLaf) by default
         try {
-            Object laf = Class.forName(SystemProperty.LAF).getDeclaredConstructor().newInstance();
-            if (laf instanceof LookAndFeel) {
-                UIManager.setLookAndFeel((LookAndFeel) laf);
-            }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-
-        } catch (NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException ex) {
-            Logger.error(ex);
+            UIManager.setLookAndFeel("com.formdev.flatlaf.FlatDarkLaf");
+        } catch (Exception ex) {
+            System.err.println("Failed to initialize FlatLaf");
         }
 
         setUIFont(new FontUIResource(ChromisFonts.DEFAULTFONT));
