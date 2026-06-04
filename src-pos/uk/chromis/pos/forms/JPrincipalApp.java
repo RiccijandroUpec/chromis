@@ -1,4 +1,4 @@
-/*
+﻿/*
 **    Chromis POS  - Open Source Point of Sale
 **
 **    This file is part of Chromis POS Version Chromis V1.5.4
@@ -176,6 +176,35 @@ public class JPrincipalApp extends javax.swing.JPanel implements AppUserView {
         password.setPreferredSize(new Dimension(200, 40));
         password.addActionListener((ActionEvent ev) -> {
             m_principalapp.changePassword();
+        });
+        actionMenu.addSeparator();
+
+// --- ChromisPOS Ecuador: About Dialog ---
+        JMenuItem aboutItem;
+        try {
+            aboutItem = new JMenuItem("Acerca de ChromisPOS", IconFactory.getResizedIcon("chromislogo.png", new Dimension(30, 30)));
+        } catch (Exception ex) {
+            aboutItem = new JMenuItem("Acerca de ChromisPOS");
+        }
+        actionMenu.add(aboutItem);
+        aboutItem.setPreferredSize(new Dimension(250, 40));
+        aboutItem.addActionListener((ActionEvent ev) -> {
+            AboutDialog about = new AboutDialog((JFrame) SwingUtilities.getWindowAncestor(m_principalapp));
+            about.setVisible(true);
+        });
+
+// --- ChromisPOS Ecuador: Backup & Restore ---
+        JMenuItem backupItem;
+        try {
+            backupItem = new JMenuItem("Respaldo y Restauracion", IconFactory.getResizedIcon("database.png", new Dimension(30, 30)));
+        } catch (Exception ex) {
+            backupItem = new JMenuItem("Respaldo y Restauracion");
+        }
+        actionMenu.add(backupItem);
+        backupItem.setPreferredSize(new Dimension(250, 40));
+        backupItem.addActionListener((ActionEvent ev) -> {
+            BackupRestoreDialog backup = new BackupRestoreDialog((JFrame) SwingUtilities.getWindowAncestor(m_principalapp));
+            backup.setVisible(true);
         });
 
 //        JMenuItem paymentTest;

@@ -1,4 +1,4 @@
-/*
+﻿/*
 **    Chromis POS  - Open Source Point of Sale
 **
 **    This file is part of Chromis POS Version Chromis V1.5.4
@@ -44,6 +44,8 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.logging.Level;
 import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.JFrame;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
@@ -217,6 +219,19 @@ public class StartPOS {
         java.awt.EventQueue.invokeLater(() -> {
             AppConfig config = AppConfig.getInstance();
             JRootFrame rootframe = new JRootFrame();
+
+            // ChromisPOS Ecuador - Setup Wizard if first run
+            if (SetupWizardDialog.isFirstRun()) {
+                SwingUtilities.invokeLater(() -> {
+                    SetupWizardDialog wizard = new SetupWizardDialog(rootframe);
+                    wizard.setVisible(true);
+                });
+            }
+
+            // ChromisPOS Ecuador - Show version info
+            System.out.println("ChromisPOS Ecuador v" + AppLocal.APP_VERSION);
+            System.out.println("Punto de Venta para Ecuador - SRI Integrado");
+            System.out.println("Autor: Riccijandro | github.com/riccijandro");
 
             if (SystemProperty.SCREENDRAG) {
                 Point origin = new Point();
