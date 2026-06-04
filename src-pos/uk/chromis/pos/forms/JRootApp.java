@@ -755,15 +755,16 @@ public class JRootApp extends JPanel implements AppView {
         jLabel1.setFont(ChromisFonts.DEFAULTFONT.deriveFont(12f));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setIcon(IconFactory.getIcon("chromislogo.png"));
-        jLabel1.setText("<html><center><b>Chromis POS - Free Open Source POS Solution</b><br>" +
-            "Copyright \u00A9 2015 - 2023 Chromis <br>" +
-            "http://www.chromis.co.uk<br>" +
+        jLabel1.setText("<html><center><b>ChromisEC - Sistema de Punto de Venta para Ecuador</b><br>" +
+            "Derechos Reservados &#169; 2015 - 2023 Chromis &amp; Contribuidores<br>" +
+            "Bifurcaci\u00f3n desarrollada para Ecuador por riccijandro<br>" +
+            "https://github.com/riccijandro/chromisposec<br>" +
             "<br>" +
-            "Chromis POS is Open Source Software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.<br>" +
+            "ChromisEC es Software de C\u00f3digo Abierto: puede redistribuirlo y/o modificarlo bajo los t\u00e9rminos de la Licencia P\u00fablica General GNU, publicada por la Free Software Foundation, en su versi\u00f3n 3 o posterior.<br>" +
             "<br>" +
-            "Chromis POS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.<br>" +
+            "ChromisEC se distribuye con la esperanza de que sea \u00fatil, pero SIN NINGUNA GARANT\u00cdA; ni siquiera la garant\u00eda impl\u00edcita de COMERCIABILIDAD o IDONEIDAD PARA UN PROP\u00d3SITO PARTICULAR. Consulte la Licencia P\u00fablica General GNU para m\u00e1s detalles.<br>" +
             "<br>" +
-            "You should have received a copy of the GNU General Public License along with Chromis POS.  If not, see http://www.gnu.org/licenses/<br>" +
+            "Deber\u00eda haber recibido una copia de la Licencia P\u00fablica General GNU junto con ChromisEC. Si no, consulte http://www.gnu.org/licenses/<br>" +
             "</center>");
         jLabel1.setAlignmentX(0.5F);
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);

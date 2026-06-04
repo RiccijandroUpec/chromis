@@ -124,7 +124,11 @@ public class JPrincipalApp extends javax.swing.JPanel implements AppUserView {
         showView("<NULL>");
 
         try {
-            m_jPanelLeft.setViewportView(getScriptMenu(m_dlSystem.getResourceAsText("Menu.Root")));
+            String menuText = m_dlSystem.getResourceAsText("Menu.Root");
+            if (menuText == null || menuText.trim().isEmpty()) {
+                throw new ScriptException("Menu.Root is empty in database");
+            }
+            m_jPanelLeft.setViewportView(getScriptMenu(menuText));
         } catch (ScriptException e) {
             try {
                 menuList.clear();

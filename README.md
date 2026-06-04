@@ -22,6 +22,10 @@ Este fork fue arquitectado, adaptado y donado a la comunidad Open-Source por:
    - El código fuente incluye un script `ChromisEC_Installer.iss` que permite compilar un archivo `Setup.exe` profesional en segundos usando Inno Setup.
    - Permite que el sistema sea 100% portable empaquetando Java.
 
+4. **Panel de Administración Centralizado** *(nuevo)*
+   - Un único panel con pestañas para **Productos**, **Categorías**, **Usuarios**, **Impuestos** y **Configuración del Sistema**.
+   - Facilita la gestión sin cambiar de pantalla, con un diseño premium y fuentes uniformes.
+
 ## 🚀 ¿Cómo empezar?
 1. Clona el repositorio.
 2. Abre tu instalador y compila con Inno Setup.

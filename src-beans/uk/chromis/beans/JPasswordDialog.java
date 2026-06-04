@@ -90,7 +90,7 @@ public class JPasswordDialog extends JDialog {
     protected void buildPasswordRequest(String userName) {
         setRequestButtonPanel(new Dimension(105, 35));
 
-        passwordPanel.add(new CustomJLabel("UserName", lblFont));
+        passwordPanel.add(new CustomJLabel(AppLocal.getIntString("label.username"), lblFont));
         passwordPanel.add(new CustomJLabel(userName, lblFont), "wrap");
         passwordPanel.add(new CustomJLabel(AppLocal.getIntString("label.password"), lblFont));
         passwordPanel.add(m_jpassword, "wrap");
@@ -101,7 +101,7 @@ public class JPasswordDialog extends JDialog {
         setModal(true);
 
         mainPanel.setBorder(BorderFactory.createLineBorder(CustomColour.getBorderColour(), 2));
-        setTitle("User Login");
+        setTitle("Ingreso de Usuario");
         getContentPane().add(mainPanel);
         getRootPane().setDefaultButton(btnOK);
 
@@ -115,7 +115,7 @@ public class JPasswordDialog extends JDialog {
         this.user = user;
         setChangeButtonPanel(new Dimension(105, 35));
 
-        passwordPanel.add(new CustomJLabel("UserName", lblFont));
+        passwordPanel.add(new CustomJLabel(AppLocal.getIntString("label.username"), lblFont));
         passwordPanel.add(new CustomJLabel(user.getName(), lblFont), "wrap");
         passwordPanel.add(new CustomJLabel(AppLocal.getIntString("label.passwordold"), lblFont));
         passwordPanel.add(oldPassword, "wrap");
@@ -131,7 +131,7 @@ public class JPasswordDialog extends JDialog {
         setModal(true);
 
         mainPanel.setBorder(BorderFactory.createLineBorder(CustomColour.getBorderColour(), 2));
-        setTitle("User Change Password");
+        setTitle("Cambiar Contraseña");
         getContentPane().add(mainPanel);
         getRootPane().setDefaultButton(btnOK);
 

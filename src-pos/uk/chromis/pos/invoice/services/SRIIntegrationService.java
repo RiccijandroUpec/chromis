@@ -15,16 +15,21 @@ import java.util.Base64;
  */
 public class SRIIntegrationService {
     
-    private String sriWebServiceUrl;
+    private String sriReceptionUrl;
+    private String sriAuthorizationUrl;
     private boolean productionEnvironment;
     private int connectionTimeout = 30000; // 30 segundos
     private int readTimeout = 30000; // 30 segundos
     
     public SRIIntegrationService(boolean productionEnvironment) {
         this.productionEnvironment = productionEnvironment;
-        this.sriWebServiceUrl = productionEnvironment ? 
-            "https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes" :
-            "https://celcert.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes";
+        if (productionEnvironment) {
+            this.sriReceptionUrl = "https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl";
+            this.sriAuthorizationUrl = "https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl";
+        } else {
+            this.sriReceptionUrl = "https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl";
+            this.sriAuthorizationUrl = "https://celcer.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl";
+        }
     }
     
     /**
@@ -45,7 +50,7 @@ public class SRIIntegrationService {
             String soapRequest = buildSoapRequest(xmlBase64, invoice.getAccessKey());
             
             // Enviar al SRI
-            String response = sendSoapRequest(soapRequest);
+            String response = sendSoapRequest(soapRequest, sriReceptionUrl);
             
             // Procesar respuesta
             boolean success = processSRIResponse(response, invoice);
@@ -84,8 +89,8 @@ public class SRIIntegrationService {
     /**
      * Envía el SOAP request al SRI
      */
-    private String sendSoapRequest(String soapRequest) throws Exception {
-        URL url = new URL(sriWebServiceUrl);
+    private String sendSoapRequest(String soapRequest, String targetUrl) throws Exception {
+        URL url = new URL(targetUrl);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         
         try {
@@ -168,7 +173,7 @@ public class SRIIntegrationService {
         soap.append("  </soap:Body>\n");
         soap.append("</soap:Envelope>\n");
         
-        return sendSoapRequest(soap.toString());
+        return sendSoapRequest(soap.toString(), sriAuthorizationUrl);
     }
     
     /**
@@ -213,17 +218,17 @@ public class SRIIntegrationService {
     }
     
     /**
-     * Obtiene la URL del web service del SRI
+     * Obtiene la URL de Recepción del SRI
      */
-    public String getSRIWebServiceUrl() {
-        return sriWebServiceUrl;
+    public String getSriReceptionUrl() {
+        return sriReceptionUrl;
     }
     
     /**
-     * Establece la URL del web service del SRI
+     * Obtiene la URL de Autorización del SRI
      */
-    public void setSRIWebServiceUrl(String sriWebServiceUrl) {
-        this.sriWebServiceUrl = sriWebServiceUrl;
+    public String getSriAuthorizationUrl() {
+        return sriAuthorizationUrl;
     }
     
     /**
@@ -238,9 +243,13 @@ public class SRIIntegrationService {
      */
     public void setProductionEnvironment(boolean productionEnvironment) {
         this.productionEnvironment = productionEnvironment;
-        this.sriWebServiceUrl = productionEnvironment ? 
-            "https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes" :
-            "https://celcert.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes";
+        if (productionEnvironment) {
+            this.sriReceptionUrl = "https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl";
+            this.sriAuthorizationUrl = "https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl";
+        } else {
+            this.sriReceptionUrl = "https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl";
+            this.sriAuthorizationUrl = "https://celcer.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl";
+        }
     }
     
     /**

@@ -16,6 +16,15 @@ public class ElectronicInvoiceDAO {
     
     public ElectronicInvoiceDAO(Connection connection) {
         this.connection = connection;
+        upgradeTable();
+    }
+    
+    private void upgradeTable() {
+        try (Statement st = connection.createStatement()) {
+            try { st.execute("ALTER TABLE electronic_invoices ADD COLUMN document_type VARCHAR(2) DEFAULT '01'"); } catch(Exception e) {}
+            try { st.execute("ALTER TABLE electronic_invoices ADD COLUMN modified_document_number VARCHAR(20)"); } catch(Exception e) {}
+            try { st.execute("ALTER TABLE electronic_invoices ADD COLUMN modification_reason VARCHAR(255)"); } catch(Exception e) {}
+        } catch(Exception e) {}
     }
     
     /**
@@ -24,8 +33,8 @@ public class ElectronicInvoiceDAO {
     public void insertInvoice(ElectronicInvoice invoice) throws SQLException {
         String sql = "INSERT INTO electronic_invoices " +
             "(id, invoice_number, access_key, issue_date, issuer_ruc, buyer_identification, " +
-            "subtotal, iva_total, total, status, created_date, updated_date) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            "subtotal, iva_total, total, status, created_date, updated_date, document_type, modified_document_number, modification_reason) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, invoice.getId());
@@ -40,6 +49,9 @@ public class ElectronicInvoiceDAO {
             pstmt.setString(10, invoice.getStatus().name());
             pstmt.setTimestamp(11, Timestamp.valueOf(LocalDateTime.now()));
             pstmt.setTimestamp(12, Timestamp.valueOf(LocalDateTime.now()));
+            pstmt.setString(13, invoice.getDocumentType() != null ? invoice.getDocumentType() : "01");
+            pstmt.setString(14, invoice.getModifiedDocumentNumber());
+            pstmt.setString(15, invoice.getModificationReason());
             
             pstmt.executeUpdate();
         }
@@ -209,6 +221,15 @@ public class ElectronicInvoiceDAO {
         invoice.setSubtotal(rs.getBigDecimal("subtotal"));
         invoice.setIvaTotal(rs.getBigDecimal("iva_total"));
         invoice.setTotal(rs.getBigDecimal("total"));
+        
+        try {
+            invoice.setDocumentType(rs.getString("document_type"));
+            invoice.setModifiedDocumentNumber(rs.getString("modified_document_number"));
+            invoice.setModificationReason(rs.getString("modification_reason"));
+        } catch (SQLException e) {
+            // Ignorar si las columnas no existen (por compatibilidad con BD antigua)
+            invoice.setDocumentType("01");
+        }
         
         return invoice;
     }

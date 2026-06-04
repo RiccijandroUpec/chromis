@@ -66,11 +66,22 @@ public class JTicketLines extends javax.swing.JPanel {
     private final Color fgcolour;
     private final Color selfgcolour;
     
-    private Color waitingSelected = Color.decode(SystemProperty.WAITINGSELECTEDCOLOUR);
-    private Color sentSelected = Color.decode(SystemProperty.SENTSELECTEDCOLOUR);
-    private Color waitingColour = Color.decode(SystemProperty.WAITINGBACKGROUNDCOLOUR);
-    private Color sentColour = Color.decode(SystemProperty.SENTBACKGROUNDCOLOUR);
-    private Color scaleColour = Color.decode("#ff8080");
+    private static Color decodeColor(String value, Color fallback) {
+        if (value == null || value.trim().isEmpty()) {
+            return fallback;
+        }
+        try {
+            return Color.decode(value);
+        } catch (NumberFormatException ex) {
+            return fallback;
+        }
+    }
+
+    private Color waitingSelected = decodeColor(SystemProperty.WAITINGSELECTEDCOLOUR, Color.LIGHT_GRAY);
+    private Color sentSelected = decodeColor(SystemProperty.SENTSELECTEDCOLOUR, Color.LIGHT_GRAY);
+    private Color waitingColour = decodeColor(SystemProperty.WAITINGBACKGROUNDCOLOUR, Color.WHITE);
+    private Color sentColour = decodeColor(SystemProperty.SENTBACKGROUNDCOLOUR, Color.WHITE);
+    private Color scaleColour = decodeColor("#ff8080", Color.RED);
     private final HashMap<Integer, String> processed;
     
     public JTicketLines(String ticketline) {
@@ -110,7 +121,8 @@ public class JTicketLines extends javax.swing.JPanel {
         m_jTicketTable.getTableHeader().setReorderingAllowed(false);
         m_jTicketTable.setDefaultRenderer(Object.class, new TicketCellRenderer(acolumns));
         
-        m_jTicketTable.setRowHeight(SystemProperty.LINESIZE);
+        int rowHeight = SystemProperty.LINESIZE;
+        m_jTicketTable.setRowHeight(rowHeight < 1 ? 30 : rowHeight);
         
         m_jTicketTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         

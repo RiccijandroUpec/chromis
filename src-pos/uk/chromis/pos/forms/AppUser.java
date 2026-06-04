@@ -173,6 +173,10 @@ public class AppUser {
      */
     public void fillPermissions(DataLogicSystem dlSystem) {
         m_apermissions = new HashSet<>();
+        if ("administrator".equalsIgnoreCase(m_sRole)) {
+            m_apermissions.add("ALL_ACCESS");
+            return;
+        }
         try {
             m_apermissions = dlSystem.getNewPermissions(m_sRole);
         } catch (BasicException | IOException | ClassNotFoundException | SQLException ex) {
@@ -187,6 +191,9 @@ public class AppUser {
      * @return
      */
     public static boolean hasPermission(String classname) {
+        if (m_apermissions != null && m_apermissions.contains("ALL_ACCESS")) {
+            return true;
+        }
         return (m_apermissions == null) ? false : m_apermissions.contains(classname);
     }
 

@@ -4,16 +4,32 @@ import uk.chromis.pos.invoice.models.ElectronicInvoice;
 import uk.chromis.pos.invoice.models.InvoiceStatus;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.*;
 import java.security.cert.*;
 import java.security.cert.Certificate;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import javax.xml.crypto.*;
+import javax.xml.crypto.dom.DOMStructure;
+import javax.xml.crypto.dsig.*;
+import javax.xml.crypto.dsig.dom.DOMSignContext;
+import javax.xml.crypto.dsig.dom.DOMValidateContext;
+import javax.xml.crypto.dsig.keyinfo.*;
+import javax.xml.crypto.dsig.spec.*;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Servicio para firmar digitalmente facturas
- * Requiere certificado digital válido en Ecuador (PKCS#7)
- * Utiliza la API estándar de Java para firma digital
+ * Genera una firma electrónica estándar XAdES-BES (requerida por el SRI en Ecuador)
+ * utilizando exclusivamente las APIs nativas de Java (JSR 105).
  */
 public class DigitalSignatureService {
     
@@ -32,183 +48,267 @@ public class DigitalSignatureService {
      */
     public void loadCertificate() throws Exception {
         if (certificatePath == null || certificatePath.isEmpty()) {
-            throw new IllegalArgumentException("Certificate path cannot be null");
+            throw new IllegalArgumentException("Ruta de certificado no especificada.");
         }
         
         File certFile = new File(certificatePath);
         if (!certFile.exists()) {
-            throw new FileNotFoundException("Certificate file not found: " + certificatePath);
+            throw new FileNotFoundException("Archivo de certificado no encontrado: " + certificatePath);
         }
         
         try (FileInputStream fis = new FileInputStream(certFile)) {
-            // Cargar KeyStore PKCS12 (formato de certificados Ecuador)
             keyStore = KeyStore.getInstance("PKCS12");
             keyStore.load(fis, certificatePassword != null ? certificatePassword.toCharArray() : new char[0]);
         }
     }
     
     /**
-     * Firma digitalmente el XML de la factura
+     * Firma digitalmente el XML de la factura en formato XAdES-BES
      */
     public void signInvoice(ElectronicInvoice invoice) throws Exception {
         if (invoice.getXmlContent() == null || invoice.getXmlContent().isEmpty()) {
-            throw new IllegalArgumentException("XML content must be generated first");
+            throw new IllegalArgumentException("El contenido XML debe ser generado primero.");
         }
         
         if (keyStore == null) {
             loadCertificate();
         }
         
-        // Obtener alias (generalmente el primero)
+        // Obtener alias y clave privada
         String alias = keyStore.aliases().nextElement();
-        
-        // Obtener la clave privada
         PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, 
             certificatePassword != null ? certificatePassword.toCharArray() : new char[0]);
         
         if (privateKey == null) {
-            throw new IllegalStateException("Private key not found in certificate");
+            throw new IllegalStateException("Clave privada no encontrada en el certificado.");
         }
         
-        // Obtener el certificado
-        Certificate certificate = keyStore.getCertificate(alias);
+        // Obtener certificado X509
+        X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
         if (certificate == null) {
-            throw new IllegalStateException("Certificate not found");
+            throw new IllegalStateException("Certificado no encontrado en el archivo cargado.");
         }
         
-        // Generar firma digital
-        String signature = generateSignature(invoice.getXmlContent(), privateKey);
+        // Parsear el XML a un Documento DOM
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        Document doc = dbf.newDocumentBuilder().parse(
+            new ByteArrayInputStream(invoice.getXmlContent().getBytes("UTF-8"))
+        );
         
-        // Crear XML firmado (estructura simplificada)
-        String signedXml = createSignedXmlContent(invoice.getXmlContent(), signature, certificate);
+        // Configurar el contexto de firma
+        DOMSignContext dsc = new DOMSignContext(privateKey, doc.getDocumentElement());
         
-        invoice.setSignedXmlContent(signedXml);
+        // Inicializar factoría de firmas XML de Java
+        XMLSignatureFactory factory = XMLSignatureFactory.getInstance("DOM");
+        
+        // Crear DigestMethod (SHA-1 es el estándar exigido por XAdES-BES en SRI)
+        DigestMethod digestMethod = factory.newDigestMethod(DigestMethod.SHA1, null);
+        
+        // Transformaciones: Enveloped y Canonicalización
+        Transform envelopedTransform = factory.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null);
+        Transform c14nTransform = factory.newTransform("http://www.w3.org/TR/2001/REC-xml-c14n-20010315", (TransformParameterSpec) null);
+        List<Transform> transformList = Arrays.asList(envelopedTransform, c14nTransform);
+        
+        // Crear identificadores únicos para la firma y propiedades XAdES
+        String signatureId = "Signature-" + UUID.randomUUID().toString();
+        String signedPropertiesId = "SignedProperties-" + UUID.randomUUID().toString();
+        
+        // 1. Referencia al propio documento completo (URI="")
+        Reference docRef = factory.newReference("", digestMethod, transformList, null, null);
+        
+        // 2. Referencia a las propiedades XAdES (#SignedProperties)
+        Reference xadesRef = factory.newReference(
+            "#" + signedPropertiesId,
+            digestMethod,
+            Collections.emptyList(),
+            "http://uri.etsi.org/01903#SignedProperties",
+            null
+        );
+        
+        // 3. Crear estructura DOM de las propiedades XAdES-BES
+        String xadesNamespace = "http://uri.etsi.org/01903/v1.3.2#";
+        Element qualifyingProperties = doc.createElementNS(xadesNamespace, "xades:QualifyingProperties");
+        qualifyingProperties.setAttribute("Target", "#" + signatureId);
+        
+        Element signedProperties = doc.createElementNS(xadesNamespace, "xades:SignedProperties");
+        signedProperties.setAttribute("Id", signedPropertiesId);
+        qualifyingProperties.appendChild(signedProperties);
+        
+        // Registrar ID en el DOM para que el motor de firmas pueda ubicar la referencia
+        signedProperties.setIdAttribute("Id", true);
+        
+        Element signedSignatureProperties = doc.createElementNS(xadesNamespace, "xades:SignedSignatureProperties");
+        signedProperties.appendChild(signedSignatureProperties);
+        
+        // Tiempo de la firma
+        Element signingTime = doc.createElementNS(xadesNamespace, "xades:SigningTime");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+        signingTime.setTextContent(sdf.format(new Date()));
+        signedSignatureProperties.appendChild(signingTime);
+        
+        // Certificado emisor
+        Element signingCertificate = doc.createElementNS(xadesNamespace, "xades:SigningCertificate");
+        signedSignatureProperties.appendChild(signingCertificate);
+        
+        Element cert = doc.createElementNS(xadesNamespace, "xades:Cert");
+        signingCertificate.appendChild(cert);
+        
+        // CertDigest
+        Element certDigest = doc.createElementNS(xadesNamespace, "xades:CertDigest");
+        cert.appendChild(certDigest);
+        
+        Element digestMethodXades = doc.createElementNS("http://www.w3.org/2000/09/xmldsig#", "ds:DigestMethod");
+        digestMethodXades.setAttribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#sha1");
+        certDigest.appendChild(digestMethodXades);
+        
+        // Calcular digest del certificado
+        MessageDigest md = MessageDigest.getInstance("SHA-1");
+        byte[] certDer = certificate.getEncoded();
+        byte[] certDigestVal = md.digest(certDer);
+        String certDigestValBase64 = Base64.getEncoder().encodeToString(certDigestVal);
+        
+        Element digestValue = doc.createElementNS("http://www.w3.org/2000/09/xmldsig#", "ds:DigestValue");
+        digestValue.setTextContent(certDigestValBase64);
+        certDigest.appendChild(digestValue);
+        
+        // IssuerSerial
+        Element issuerSerial = doc.createElementNS(xadesNamespace, "xades:IssuerSerial");
+        cert.appendChild(issuerSerial);
+        
+        Element issuerName = doc.createElementNS("http://www.w3.org/2000/09/xmldsig#", "ds:X509IssuerName");
+        issuerName.setTextContent(certificate.getIssuerDN().getName());
+        issuerSerial.appendChild(issuerName);
+        
+        Element serialNumber = doc.createElementNS("http://www.w3.org/2000/09/xmldsig#", "ds:X509SerialNumber");
+        serialNumber.setTextContent(certificate.getSerialNumber().toString());
+        issuerSerial.appendChild(serialNumber);
+        
+        // Empaquetar QualifyingProperties en un ds:Object de la firma
+        DOMStructure xadesObjectStructure = new DOMStructure(qualifyingProperties);
+        XMLObject xadesObject = factory.newXMLObject(Collections.singletonList(xadesObjectStructure), null, null, null);
+        
+        // Configurar SignedInfo
+        CanonicalizationMethod cm = factory.newCanonicalizationMethod(
+            "http://www.w3.org/TR/2001/REC-xml-c14n-20010315",
+            (C14NMethodParameterSpec) null
+        );
+        SignatureMethod sm = factory.newSignatureMethod(
+            "http://www.w3.org/2000/09/xmldsig#rsa-sha1",
+            null
+        );
+        
+        List<Reference> references = Arrays.asList(docRef, xadesRef);
+        SignedInfo si = factory.newSignedInfo(cm, sm, references);
+        
+        // Configurar KeyInfo (X509Data)
+        KeyInfoFactory kif = factory.getKeyInfoFactory();
+        X509Data x509Data = kif.newX509Data(Collections.singletonList(certificate));
+        KeyInfo ki = kif.newKeyInfo(Collections.singletonList(x509Data));
+        
+        // Ensamblar Firma XML completa
+        XMLSignature signature = factory.newXMLSignature(
+            si,
+            ki,
+            Collections.singletonList(xadesObject),
+            signatureId,
+            null
+        );
+        
+        // Firmar el documento (agrega el elemento <ds:Signature> al XML)
+        signature.sign(dsc);
+        
+        // Serializar de DOM a String UTF-8 sin saltos innecesarios
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer = tf.newTransformer();
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        
+        StringWriter writer = new StringWriter();
+        transformer.transform(new DOMSource(doc), new StreamResult(writer));
+        
+        invoice.setSignedXmlContent(writer.getBuffer().toString());
         invoice.setStatus(InvoiceStatus.SIGNED);
     }
     
     /**
-     * Genera la firma digital del contenido XML
-     */
-    private String generateSignature(String xmlContent, PrivateKey privateKey) throws Exception {
-        // Usar SHA256 para firmar
-        Signature signature = Signature.getInstance("SHA256withRSA");
-        signature.initSign(privateKey);
-        signature.update(xmlContent.getBytes("UTF-8"));
-        
-        byte[] signatureBytes = signature.sign();
-        
-        // Codificar a Base64
-        return java.util.Base64.getEncoder().encodeToString(signatureBytes);
-    }
-    
-    /**
-     * Crea el XML firmado agregando la firma digital
-     */
-    private String createSignedXmlContent(String xmlContent, String signature, Certificate certificate) throws Exception {
-        // Extraer el certificado codificado en Base64
-        byte[] certBytes = certificate.getEncoded();
-        String certBase64 = java.util.Base64.getEncoder().encodeToString(certBytes);
-        
-        // Estructura básica de XML con firma (nota: SRI requiere formato específico)
-        StringBuilder signedXml = new StringBuilder();
-        signedXml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        signedXml.append("<factura>\n");
-        signedXml.append("  <contenido>\n");
-        signedXml.append(xmlContent);
-        signedXml.append("  </contenido>\n");
-        signedXml.append("  <firma>\n");
-        signedXml.append("    <signatureValue>").append(signature).append("</signatureValue>\n");
-        signedXml.append("    <certificate>").append(certBase64).append("</certificate>\n");
-        signedXml.append("  </firma>\n");
-        signedXml.append("</factura>\n");
-        
-        return signedXml.toString();
-    }
-    
-    /**
-     * Valida la firma digital de un documento
+     * Valida la firma digital de un documento XML firmado
      */
     public boolean validateSignature(ElectronicInvoice invoice) throws Exception {
         if (invoice.getSignedXmlContent() == null || invoice.getSignedXmlContent().isEmpty()) {
             return false;
         }
         
-        if (keyStore == null) {
-            loadCertificate();
-        }
+        // Parsear XML firmado
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        Document doc = dbf.newDocumentBuilder().parse(
+            new ByteArrayInputStream(invoice.getSignedXmlContent().getBytes("UTF-8"))
+        );
         
-        // Obtener alias y certificado
-        String alias = keyStore.aliases().nextElement();
-        Certificate certificate = keyStore.getCertificate(alias);
-        
-        if (certificate == null) {
+        // Buscar el nodo ds:Signature
+        NodeList nl = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
+        if (nl.getLength() == 0) {
             return false;
         }
         
-        // Extraer contenido y firma del XML
-        String originalContent = extractOriginalContent(invoice.getSignedXmlContent());
-        String signatureValue = extractSignatureValue(invoice.getSignedXmlContent());
+        // Contexto de validación
+        DOMValidateContext valContext = new DOMValidateContext(
+            new SimpleKeySelector(), 
+            nl.item(0)
+        );
         
-        // Decodificar firma de Base64
-        byte[] signatureBytes = java.util.Base64.getDecoder().decode(signatureValue);
+        XMLSignatureFactory factory = XMLSignatureFactory.getInstance("DOM");
+        XMLSignature signature = factory.unmarshalXMLSignature(valContext);
         
-        // Verificar firma
-        Signature signature = Signature.getInstance("SHA256withRSA");
-        signature.initVerify(certificate.getPublicKey());
-        signature.update(originalContent.getBytes("UTF-8"));
-        
-        return signature.verify(signatureBytes);
+        return signature.validate(valContext);
     }
     
     /**
-     * Extrae el contenido original del XML firmado
+     * Selector de clave simple para validación de firmas XML
      */
-    private String extractOriginalContent(String signedXml) {
-        int startIdx = signedXml.indexOf("<contenido>") + "<contenido>".length();
-        int endIdx = signedXml.indexOf("</contenido>");
-        return signedXml.substring(startIdx, endIdx);
+    private static class SimpleKeySelector extends KeySelector {
+        @Override
+        public KeySelectorResult select(KeyInfo keyInfo, KeySelector.Purpose purpose,
+                                        AlgorithmMethod method, XMLCryptoContext context)
+            throws KeySelectorException {
+            
+            for (Object info : keyInfo.getContent()) {
+                if (info instanceof X509Data) {
+                    X509Data x509Data = (X509Data) info;
+                    for (Object o : x509Data.getContent()) {
+                        if (o instanceof X509Certificate) {
+                            final X509Certificate cert = (X509Certificate) o;
+                            return new KeySelectorResult() {
+                                @Override
+                                public Key getKey() {
+                                    return cert.getPublicKey();
+                                }
+                            };
+                        }
+                    }
+                }
+            }
+            throw new KeySelectorException("No se encontró certificado X509 válido en KeyInfo.");
+        }
     }
     
-    /**
-     * Extrae el valor de firma del XML firmado
-     */
-    private String extractSignatureValue(String signedXml) {
-        int startIdx = signedXml.indexOf("<signatureValue>") + "<signatureValue>".length();
-        int endIdx = signedXml.indexOf("</signatureValue>");
-        return signedXml.substring(startIdx, endIdx);
-    }
-    
-    /**
-     * Obtiene la ruta del certificado
-     */
     public String getCertificatePath() {
         return certificatePath;
     }
     
-    /**
-     * Establece la ruta del certificado
-     */
     public void setCertificatePath(String certificatePath) {
         this.certificatePath = certificatePath;
     }
     
-    /**
-     * Obtiene la contraseña del certificado
-     */
     public String getCertificatePassword() {
         return certificatePassword;
     }
     
-    /**
-     * Establece la contraseña del certificado
-     */
     public void setCertificatePassword(String certificatePassword) {
         this.certificatePassword = certificatePassword;
     }
     
-    /**
-     * Verifica si hay un certificado cargado
-     */
     public boolean isCertificateLoaded() {
         return keyStore != null;
     }

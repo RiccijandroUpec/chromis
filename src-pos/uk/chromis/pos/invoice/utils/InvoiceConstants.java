@@ -49,9 +49,9 @@ public class InvoiceConstants {
     public static final String ENVIRONMENT_TEST = "test";
     public static final String ENVIRONMENT_PRODUCTION = "production";
     
-    // URLs SRI
-    public static final String SRI_URL_TEST = "https://celcert.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes";
-    public static final String SRI_URL_PRODUCTION = "https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes";
+    // URLs SRI (Referencia Offline)
+    public static final String SRI_URL_TEST = "https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl";
+    public static final String SRI_URL_PRODUCTION = "https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl";
     
     // Monedas
     public static final String CURRENCY_USD = "USD";

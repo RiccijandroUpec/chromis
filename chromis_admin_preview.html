@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 CHROMIS ADMIN - Aplicación Standalone</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #344a60 0%, #2c3e50 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .container {
+            flex: 1;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .sidebar {
+            width: 200px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow-y: auto;
+        }
+        
+        .tab-button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            background: transparent;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-button:hover {
+            background: #f5f5f5;
+            border-left-color: #3498db;
+        }
+        
+        .tab-button.active {
+            background: #e8f4f8;
+            border-left-color: #3498db;
+            color: #3498db;
+        }
+        
+        .content {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 30px;
+            overflow-y: auto;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .section-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #344a60;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .card {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .card p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #f5f7fa;
+            border-left: 4px solid #3498db;
+            border-radius: 4px;
+        }
+        
+        .section-label {
+            font-weight: bold;
+            color: #344a60;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .config-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            margin: 8px 0;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .config-item-name {
+            flex: 1;
+        }
+        
+        .config-btn {
+            padding: 6px 12px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s ease;
+        }
+        
+        .config-btn:hover {
+            background: #2980b9;
+        }
+        
+        .info-box {
+            background: #ecf0f1;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #d0d0d0;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #344a60;
+        }
+        
+        .info-value {
+            color: #555;
+        }
+        
+        .status-online {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+        
+        .footer {
+            background: #34495e;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn-primary, .btn-success {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        
+        .btn-success {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #27ae60;
+        }
+        
+        input[type="text"] {
+            width: 200px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔧 CHROMIS ADMIN</h1>
+        <p>Aplicación Standalone - Una Sola Aplicación Grande, Todo Centralizado</p>
+    </div>
+    
+    <div class="container">
+        <div class="sidebar">
+            <button class="tab-button active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+            <button class="tab-button" onclick="switchTab('admin')">⚙️ Admin</button>
+            <button class="tab-button" onclick="switchTab('database')">🗄️ Base de Datos</button>
+            <button class="tab-button" onclick="switchTab('billing')">📋 Facturación</button>
+            <button class="tab-button" onclick="switchTab('security')">🔐 Seguridad</button>
+            <button class="tab-button" onclick="switchTab('reports')">📊 Reportes</button>
+        </div>
+        
+        <div class="content">
+            <!-- DASHBOARD TAB -->
+            <div id="dashboard" class="tab-content active">
+                <div class="section-title">📊 Dashboard Centralizado</div>
+                
+                <div class="section-label">⚡ Acceso Rápido</div>
+                <div class="card-grid">
+                    <div class="card">
+                        <h3>📦 Productos</h3>
+                        <p>Gestionar catálogo</p>
+                    </div>
+                    <div class="card">
+                        <h3>👥 Usuarios</h3>
+                        <p>Gestionar accesos</p>
+                    </div>
+                    <div class="card">
+                        <h3>💰 Ventas</h3>
+                        <p>Crear ventas</p>
+                    </div>
+                    <div class="card">
+                        <h3>📊 Reportes</h3>
+                        <p>Análisis</p>
+                    </div>
+                    <div class="card">
+                        <h3>⚙️ Config</h3>
+                        <p>Configuración</p>
+                    </div>
+                    <div class="card">
+                        <h3>📋 Facturación</h3>
+                        <p>Facturación SRI</p>
+                    </div>
+                </div>
+                
+                <div class="section-label">📊 Información del Sistema</div>
+                <div class="info-box">
+                    <div class="info-row">
+                        <span class="info-label">Versión:</span>
+                        <span class="info-value">1.1.0</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Base de Datos:</span>
+                        <span class="info-value">ChromisNewTest (Conectada)</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Servidor:</span>
+                        <span class="info-value">Localhost:3306</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Usuario:</span>
+                        <span class="info-value">root</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Estado:</span>
+                        <span class="info-value status-online">✅ En Línea</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ADMIN TAB -->
+            <div id="admin" class="tab-content">
+                <div class="section-title">⚙️ Panel de Administración (9 Secciones)</div>
+                
+                <div class="section">
+                    <div class="section-label">📦 INVENTARIO & CATÁLOGO</div>
+                    <div class="config-item"><span class="config-item-name">▸ Productos</span><button class="config-btn">Configurar</button></div>
+                    <div class="config-item"><span class="config-item-name">▸ Categorías</span><button class="config-btn">Configurar</button></div>
+                    <div class="config-item"><span class="config-item-name">▸ Stock</span><button class="config-btn">Configurar</button></div>
+                    <div class="config-item"><span class="config-item-name">▸ Proveedores</span><button class="config-btn">Configurar</button></div>
+                    <div class="config-item"><span class="config-item-name">▸ Composición</span><button class="config-btn">Configurar</button></div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-label">👥 PERSONAL & PERMISOS</div>
+                    <div class="config-item"><span class="config-item-name">▸ Usuarios</span><button class="config-btn">Configurar</button></div>
+                    <div class="config-item"><span class="config-item-name">▸ Permisos</span><button class="config-btn">Configurar</button></div>
+                    <div class="config-item"><span class="config-item-name">▸ Roles</span><button class="config-btn">Configurar</button></div>
+                    <div class="config-item"><span class="config-item-name">▸ Presencia</span><button class="config-btn">Configurar</button></div>
+                    <div class="config-item"><span class="config-item-name">▸ Salarios</span><button class="config-btn">Configurar</button></div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-label">⚙️ CONFIGURACIÓN DEL SISTEMA (INCLUYE BASE DE DATOS)</div>
+                    <div class="config-item"><span class="config-item-name">▸ General</span><button class="config-btn">Configurar</button></div>
+                    <div class="config-item"><span class="config-item-name">▸ 🗄️ Base de Datos</span><button class="config-btn">Configurar</button></div>
+                    <div class="config-item"><span class="config-item-name">▸ Servidor</span><button class="config-btn">Configurar</button></div>
+                    <div class="config-item"><span class="config-item-name">▸ Recibos</span><button class="config-btn">Configurar</button></div>
+                    <div class="config-item"><span class="config-item-name">▸ Impresoras</span><button class="config-btn">Configurar</button></div>
+                    <div class="config-item"><span class="config-item-name">▸ Display</span><button class="config-btn">Configurar</button></div>
+                    <div class="config-item"><span class="config-item-name">▸ Localización</span><button class="config-btn">Configurar</button></div>
+                </div>
+            </div>
+            
+            <!-- DATABASE TAB -->
+            <div id="database" class="tab-content">
+                <div class="section-title">🗄️ Configuración de Base de Datos</div>
+                
+                <div class="info-box">
+                    <div class="info-row">
+                        <span class="info-label">Servidor:</span>
+                        <input type="text" value="Localhost">
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Puerto:</span>
+                        <input type="text" value="3306">
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Base de Datos:</span>
+                        <input type="text" value="chromisnewtest">
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Usuario:</span>
+                        <input type="text" value="root">
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Contraseña:</span>
+                        <input type="text" value="••••••••">
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn-primary">🔗 Probar Conexión</button>
+                    <button class="btn-success">💾 Guardar</button>
+                </div>
+                
+                <div class="section-label" style="margin-top: 20px;">Opciones Adicionales</div>
+                <div class="section">
+                    <div class="config-item"><span class="config-item-name">▸ Respaldo de BD</span><button class="config-btn">Ejecutar</button></div>
+                    <div class="config-item"><span class="config-item-name">▸ Restaurar desde Backup</span><button class="config-btn">Restaurar</button></div>
+                    <div class="config-item"><span class="config-item-name">▸ Optimización</span><button class="config-btn">Optimizar</button></div>
+                    <div class="config-item"><span class="config-item-name">▸ Recuperación</span><button class="config-btn">Recuperar</button></div>
+                </div>
+            </div>
+            
+            <!-- BILLING TAB -->
+            <div id="billing" class="tab-content">
+                <div class="section-title">📋 Facturación Electrónica</div>
+                
+                <div class="section">
+                    <div class="config-item"><span class="config-item-name">▸ RUC de la Empresa</span><button class="config-btn">Configurar</button></div>
+                    <div class="config-item"><span class="config-item-name">▸ Razón Social</span><button class="config-btn">Configurar</button></div>
+                    <div class="config-item"><span class="config-item-name">▸ Número de Autorización SRI</span><button class="config-btn">Configurar</button></div>
+                    <div class="config-item"><span class="config-item-name">▸ Certificado Digital</span><button class="config-btn">Instalar</button></div>
+                    <div class="config-item"><span class="config-item-name">▸ Plantilla de Factura</span><button class="config-btn">Personalizar</button></div>
+                </div>
+            </div>
+            
+            <!-- SECURITY TAB -->
+            <div id="security" class="tab-content">
+                <div class="section-title">🔐 Seguridad</div>
+                
+                <div class="section">
+                    <div class="config-item"><span class="config-item-name">🔒 Gestión de Usuarios y Roles</span><button class="config-btn">Gestionar</button></div>
+                    <div class="config-item"><span class="config-item-name">🔒 Política de Contraseñas</span><button class="config-btn">Gestionar</button></div>
+                    <div class="config-item"><span class="config-item-name">🔒 Autenticación de Dos Factores</span><button class="config-btn">Configurar</button></div>
+                    <div class="config-item"><span class="config-item-name">🔒 Auditoría y Registros</span><button class="config-btn">Ver</button></div>
+                    <div class="config-item"><span class="config-item-name">🔒 Encriptación de Datos</span><button class="config-btn">Configurar</button></div>
+                    <div class="config-item"><span class="config-item-name">🔒 Backups de Seguridad</span><button class="config-btn">Ejecutar</button></div>
+                    <div class="config-item"><span class="config-item-name">🔒 Control de Sesiones</span><button class="config-btn">Gestionar</button></div>
+                    <div class="config-item"><span class="config-item-name">🔒 Permisos de Acceso</span><button class="config-btn">Gestionar</button></div>
+                </div>
+            </div>
+            
+            <!-- REPORTS TAB -->
+            <div id="reports" class="tab-content">
+                <div class="section-title">📊 Reportes y Análisis</div>
+                
+                <div class="section">
+                    <div class="config-item"><span class="config-item-name">📈 Reporte de Ventas Diarias</span><button class="config-btn">Ver Reporte</button></div>
+                    <div class="config-item"><span class="config-item-name">📦 Reporte de Inventario</span><button class="config-btn">Ver Reporte</button></div>
+                    <div class="config-item"><span class="config-item-name">👥 Reporte de Clientes</span><button class="config-btn">Ver Reporte</button></div>
+                    <div class="config-item"><span class="config-item-name">💹 Reporte de Ganancias</span><button class="config-btn">Ver Reporte</button></div>
+                    <div class="config-item"><span class="config-item-name">🔍 Auditoría del Sistema</span><button class="config-btn">Ver Reporte</button></div>
+                    <div class="config-item"><span class="config-item-name">📋 Reporte Fiscal</span><button class="config-btn">Ver Reporte</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        ✅ Sistema Online - Conectado a BD | Versión 1.1.0 | © 2024 Chromis Admin Standalone
+    </div>
+    
+    <script>
+        function switchTab(tabName) {
+            // Hide all tabs
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(c => c.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(b => b.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Highlight selected button
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

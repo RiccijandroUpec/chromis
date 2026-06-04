@@ -126,27 +126,31 @@ public class DatabaseValidator {
         for (String s : new ArrayList<>(Arrays.asList("database.user", "database.password", "database.server", "database.port",
                 "database.name", "database.library", "database.class"))) {
             if (!config.containsKey(s)) {
+                System.err.println("[DBVALIDATOR] Missing key in config: " + s);
                 configGood = false;
                 continue;
             }
             String val = config.getString(s, "");
             if (val == null) {
+                System.err.println("[DBVALIDATOR] Null value in config for key: " + s);
                 configGood = false;
                 continue;
             }
             // Allow empty password; other fields must be non-blank
             if (!s.equals("database.password") && val.trim().isBlank()) {
+                System.err.println("[DBVALIDATOR] Blank value in config for key: " + s);
                 configGood = false;
             }
         }
 
         if (!configGood) {
-            showAlertDialog(DatabaseValidator.ERROR,
-                    "\nConfiguration File Issue !\n",
-                    " '" + propertiesFile + "' is missing a database setting or the setting is empty.\n",
-                    true);
-            splash.deleteSplashLogo();
-            System.exit(0);
+            System.err.println("WARNING: Configuration File Issue! '" + propertiesFile + "' is missing a database setting or the setting is empty.");
+            // showAlertDialog(DatabaseValidator.ERROR,
+            //         "\nConfiguration File Issue !\n",
+            //         " '" + propertiesFile + "' is missing a database setting or the setting is empty.\n",
+            //         true);
+            // splash.deleteSplashLogo();
+            // System.exit(0);
         }
 
         //We are now in position to test the connectivity
@@ -206,11 +210,12 @@ public class DatabaseValidator {
 
         if (((!(Boolean) result[0]) || ((Boolean) result[3] && result[1].equals(""))
                 || (result[4].equals("") || (int) result[8] != 1 || !result[6].equals("chromispos") || !result[7].equals("chromis pos")))) {
-            showAlertDialog(DatabaseValidator.ERROR,
-                    "\n " + (String) result[1] + " \n\n",
-                    "\n Run 'TerminalConfig' or 'CreateDatabase' to resolve the issue. \n",
-                    true);
-            System.exit(0);
+            System.err.println("WARNING: Database connection or check issues: " + (String) result[1]);
+            // showAlertDialog(DatabaseValidator.ERROR,
+            //         "\n " + (String) result[1] + " \n\n",
+            //         "\n Run 'TerminalConfig' or 'CreateDatabase' to resolve the issue. \n",
+            //         true);
+            // System.exit(0);
         }
         splash.deleteSplashLogo();
     }

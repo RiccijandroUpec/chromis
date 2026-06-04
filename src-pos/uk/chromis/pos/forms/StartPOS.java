@@ -119,17 +119,14 @@ public class StartPOS {
         dbValidate.validate("chromisposconfig.properties");
 
         DatabaseRepair.repairPayments();
+        DatabaseRepair.repairSiteGuid();
 
         if (DbUtils.getTriggerCount() < 35) {
-            JAlertPane.messageBox(new Dimension(500, 200), JAlertPane.NONE, "\nThe database is missing all or some of the required \ntiggers\\views.\n\n"
-                    + "Please run Administration to repair.", 16, new Dimension(125, 50), JAlertPane.OK_OPTION);
-            System.exit(0);
+            System.err.println("WARNING: The database is missing all or some of the required triggers.");
         }
 
         if (DbUtils.getViewCount() != 1) {
-            JAlertPane.messageBox(new Dimension(500, 200), JAlertPane.NONE, "\nThe database is missing all or some of the required \ntiggers\\views.\n\n"
-                    + "Please run Administration to repair.", 16, new Dimension(125, 50), JAlertPane.OK_OPTION);
-            System.exit(0);
+            System.err.println("WARNING: The database is missing all or some of the required views.");
         }
 
         // Set the format patterns
@@ -141,16 +138,32 @@ public class StartPOS {
         Formats.setTimePattern(SystemProperty.TIME);
         Formats.setDateTimePattern(SystemProperty.DATETIME);
 
-        if (!(new File("iconsets/" + SystemProperty.ICONCOLOUR + ".zip")).exists()) {
-            JAlertPane.showAlertDialog(JAlertPane.WARNING,
-                    null,
-                    "\n Chromis cannot run !!",
-                    "  Unable to find the icons file.",
-                    JAlertPane.OK_OPTION, true);
-            System.exit(0);
+        String iconColour = SystemProperty.ICONCOLOUR;
+        if (iconColour == null || iconColour.trim().isEmpty()) {
+            iconColour = "royalblue";
+        }
+        if (!(new File("iconsets/" + iconColour + ".zip")).exists()) {
+            File folder = new File("iconsets");
+            File[] files = folder.listFiles(new java.io.FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return name.endsWith(".zip");
+                }
+            });
+            if (files != null && files.length > 0) {
+                String fileName = files[0].getName();
+                iconColour = fileName.substring(0, fileName.lastIndexOf("."));
+            } else {
+                JAlertPane.showAlertDialog(JAlertPane.WARNING,
+                        null,
+                        "\n Chromis cannot run !!",
+                        "  Unable to find the icons file.",
+                        JAlertPane.OK_OPTION, true);
+                System.exit(0);
+            }
         }
 
-        IconFactory.cacheIconsFromZip("/iconsets/" + SystemProperty.ICONCOLOUR + ".zip");
+        IconFactory.cacheIconsFromZip("/iconsets/" + iconColour + ".zip");
         IconFactory.cacheIconsFromFolder("/images");
 
         // tests if the database is lower version than the application

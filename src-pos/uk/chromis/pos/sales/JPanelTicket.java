@@ -248,6 +248,46 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
             btnReprintAction();
         });
 
+        initElectronicInvoiceToggle();
+    }
+
+    private void initElectronicInvoiceToggle() {
+        final javax.swing.JToggleButton btnToggleInvoice = new javax.swing.JToggleButton();
+        btnToggleInvoice.setFocusPainted(false);
+        btnToggleInvoice.setFocusable(false);
+        btnToggleInvoice.setFont(new java.awt.Font("Dialog", java.awt.Font.BOLD, 12));
+        btnToggleInvoice.setBorder(javax.swing.BorderFactory.createEmptyBorder(6, 12, 6, 12));
+        btnToggleInvoice.setOpaque(true);
+        btnToggleInvoice.setContentAreaFilled(true);
+        btnToggleInvoice.setBorderPainted(false);
+        
+        btnToggleInvoice.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                boolean selected = btnToggleInvoice.isSelected();
+                uk.chromis.pos.invoice.integration.ChromisPOSInvoiceIntegration.setElectronicInvoiceActive(selected);
+                updateToggleStyle(btnToggleInvoice, selected);
+            }
+        });
+        
+        boolean active = uk.chromis.pos.invoice.integration.ChromisPOSInvoiceIntegration.isElectronicInvoiceActive;
+        btnToggleInvoice.setSelected(active);
+        updateToggleStyle(btnToggleInvoice, active);
+        
+        m_jButtonsExt.add(javax.swing.Box.createHorizontalStrut(10));
+        m_jButtonsExt.add(btnToggleInvoice);
+    }
+    
+    private void updateToggleStyle(javax.swing.JToggleButton btn, boolean active) {
+        if (active) {
+            btn.setText("Facturación: ACTIVA");
+            btn.setBackground(new java.awt.Color(46, 204, 113));
+            btn.setForeground(java.awt.Color.WHITE);
+        } else {
+            btn.setText("Facturación: INACTIVA");
+            btn.setBackground(new java.awt.Color(231, 76, 60));
+            btn.setForeground(java.awt.Color.WHITE);
+        }
     }
 
     private void addGiftCardSale() {
@@ -1418,6 +1458,10 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                         if (executeEvent(ticket, ticketext, "ticket.save") == null) {
                             try {
                                 dlSales.saveTicket(ticket, m_App.getInventoryLocation(), loyaltyCard, ticketext, deliveryInfo);
+                                
+                                // Facturación Electrónica Ecuador - Procesar asíncronamente
+                                uk.chromis.pos.invoice.integration.ChromisPOSInvoiceIntegration.processTicket(ticket);
+
                                 // Process Gift Card and gift Vouchers here
                                 for (TicketLineInfo line : m_oTicket.getLines()) {
                                     if ((line.getProperty("vCode") != "") && (line.getProperty("vCode") != null)) {

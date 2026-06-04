@@ -26,7 +26,7 @@ package uk.chromis.pos.forms;
 
 public class AppLocal implements Versions {
 
-    public static final String APP_NAME = "Chromis POS";
+    public static final String APP_NAME = "ChromisEC";
     public static final String APP_ID = "chromispos";
     public static final String APP_DEMO = "";
 

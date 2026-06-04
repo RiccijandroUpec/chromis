@@ -106,4 +106,243 @@ public class DatabaseRepair {
         }
     }
 
+    public static void repairSiteGuid() {
+        Connection conn = null;
+        Statement stmt = null;
+        try {
+            conn = ConnectionPoolFactory.getConnection();
+            stmt = conn.createStatement();
+            
+            // 1. Create siteguid table if missing
+            try {
+                stmt.execute(
+                    "CREATE TABLE IF NOT EXISTS siteguid (" +
+                    "  guid VARCHAR(36) NOT NULL," +
+                    "  PRIMARY KEY (guid)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8;"
+                );
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseRepair.class.getName()).log(Level.WARNING, "Error creating siteguid table", ex);
+            }
+
+            // 2. Ensure siteguid has at least one record
+            String siteGuid = null;
+            ResultSet rs = null;
+            try {
+                rs = stmt.executeQuery("SELECT guid FROM siteguid LIMIT 1");
+                if (rs.next()) {
+                    siteGuid = rs.getString("guid");
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseRepair.class.getName()).log(Level.WARNING, "Error reading siteguid", ex);
+            } finally {
+                if (rs != null) {
+                    try { rs.close(); } catch (SQLException e) {}
+                }
+            }
+
+            if (siteGuid == null) {
+                siteGuid = java.util.UUID.randomUUID().toString();
+                try {
+                    stmt.execute("INSERT INTO siteguid (guid) VALUES ('" + siteGuid + "')");
+                } catch (SQLException ex) {
+                    Logger.getLogger(DatabaseRepair.class.getName()).log(Level.WARNING, "Error inserting siteguid", ex);
+                }
+            }
+
+            // 3. Ensure people table has siteguid and iswaiter columns
+            try {
+                stmt.execute("ALTER TABLE people ADD COLUMN siteguid VARCHAR(36) NULL");
+            } catch (SQLException ex) {
+                // Column probably already exists, ignore
+            }
+            try {
+                stmt.execute("ALTER TABLE people ADD COLUMN iswaiter BOOLEAN DEFAULT FALSE");
+            } catch (SQLException ex) {
+                // Column probably already exists, ignore
+            }
+
+            // 4. Update people siteguid if null or empty
+            if (siteGuid != null) {
+                try {
+                    stmt.execute("UPDATE people SET siteguid = '" + siteGuid + "' WHERE siteguid IS NULL OR siteguid = ''");
+                } catch (SQLException ex) {
+                    Logger.getLogger(DatabaseRepair.class.getName()).log(Level.WARNING, "Error updating people siteguid", ex);
+                }
+            }
+
+            // 5. Ensure resources table has siteguid column
+            try {
+                stmt.execute("ALTER TABLE resources ADD COLUMN siteguid VARCHAR(36) NULL");
+            } catch (SQLException ex) {
+                // Column probably already exists, ignore
+            }
+            if (siteGuid != null) {
+                try {
+                    stmt.execute("UPDATE resources SET siteguid = '" + siteGuid + "' WHERE siteguid IS NULL OR siteguid = ''");
+                } catch (SQLException ex) {
+                    Logger.getLogger(DatabaseRepair.class.getName()).log(Level.WARNING, "Error updating resources siteguid", ex);
+                }
+            }
+
+            // 6. Ensure roles table exists and has siteguid column
+            try {
+                stmt.execute(
+                    "CREATE TABLE IF NOT EXISTS roles (" +
+                    "  id VARCHAR(255) NOT NULL," +
+                    "  name VARCHAR(255) NOT NULL," +
+                    "  permissions MEDIUMBLOB," +
+                    "  siteguid VARCHAR(36) NULL," +
+                    "  PRIMARY KEY (id)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8;"
+                );
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseRepair.class.getName()).log(Level.WARNING, "Error creating roles table", ex);
+            }
+            try {
+                stmt.execute("ALTER TABLE roles ADD COLUMN siteguid VARCHAR(36) NULL");
+            } catch (SQLException ex) {
+                // Column probably already exists, ignore
+            }
+            if (siteGuid != null) {
+                try {
+                    stmt.execute("UPDATE roles SET siteguid = '" + siteGuid + "' WHERE siteguid IS NULL OR siteguid = ''");
+                } catch (SQLException ex) {
+                    Logger.getLogger(DatabaseRepair.class.getName()).log(Level.WARNING, "Error updating roles siteguid", ex);
+                }
+            }
+
+            // 7. Ensure terminals table exists and has all columns
+            try {
+                stmt.execute(
+                    "CREATE TABLE IF NOT EXISTS terminals (" +
+                    "  id VARCHAR(255) NOT NULL," +
+                    "  terminal_name VARCHAR(255) NOT NULL," +
+                    "  terminal_key VARCHAR(255) NOT NULL," +
+                    "  PRIMARY KEY (id)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8;"
+                );
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseRepair.class.getName()).log(Level.WARNING, "Error creating terminals table", ex);
+            }
+            try { stmt.execute("ALTER TABLE terminals ADD COLUMN terminal_location VARCHAR(255) NULL"); } catch (SQLException ex) {}
+            try { stmt.execute("ALTER TABLE terminals ADD COLUMN active_cash VARCHAR(255) NULL"); } catch (SQLException ex) {}
+            try { stmt.execute("ALTER TABLE terminals ADD COLUMN appversion VARCHAR(255) NULL"); } catch (SQLException ex) {}
+            try { stmt.execute("ALTER TABLE terminals ADD COLUMN active_session BOOLEAN DEFAULT FALSE"); } catch (SQLException ex) {}
+            try { stmt.execute("ALTER TABLE terminals ADD COLUMN active_user VARCHAR(255) NULL"); } catch (SQLException ex) {}
+            try { stmt.execute("ALTER TABLE terminals ADD COLUMN siteguid VARCHAR(36) NULL"); } catch (SQLException ex) {}
+            if (siteGuid != null) {
+                try {
+                    stmt.execute("UPDATE terminals SET siteguid = '" + siteGuid + "' WHERE siteguid IS NULL OR siteguid = ''");
+                } catch (SQLException ex) {
+                    Logger.getLogger(DatabaseRepair.class.getName()).log(Level.WARNING, "Error updating terminals siteguid", ex);
+                }
+            }
+
+            // 8. Ensure closedcash table has siteguid column
+            try {
+                stmt.execute("ALTER TABLE closedcash ADD COLUMN siteguid VARCHAR(36) NULL");
+            } catch (SQLException ex) {
+                // Column probably already exists, ignore
+            }
+            if (siteGuid != null) {
+                try {
+                    stmt.execute("UPDATE closedcash SET siteguid = '" + siteGuid + "' WHERE siteguid IS NULL OR siteguid = ''");
+                } catch (SQLException ex) {
+                    Logger.getLogger(DatabaseRepair.class.getName()).log(Level.WARNING, "Error updating closedcash siteguid", ex);
+                }
+            }
+
+            // 9. Ensure ticketlines table has all required columns
+            String[] ticketlinesCols = {
+                "ALTER TABLE ticketlines ADD COLUMN linetype VARCHAR(255) NULL",
+                "ALTER TABLE ticketlines ADD COLUMN soldprice DOUBLE DEFAULT 0.0",
+                "ALTER TABLE ticketlines ADD COLUMN soldpriceexc DOUBLE DEFAULT 0.0",
+                "ALTER TABLE ticketlines ADD COLUMN priceinc DOUBLE DEFAULT 0.0",
+                "ALTER TABLE ticketlines ADD COLUMN priceexc DOUBLE DEFAULT 0.0",
+                "ALTER TABLE ticketlines ADD COLUMN buyprice DOUBLE DEFAULT 0.0",
+                "ALTER TABLE ticketlines ADD COLUMN refundqty DOUBLE DEFAULT 0.0",
+                "ALTER TABLE ticketlines ADD COLUMN taxinclusive BOOLEAN DEFAULT TRUE",
+                "ALTER TABLE ticketlines ADD COLUMN taxrate DOUBLE DEFAULT 0.0",
+                "ALTER TABLE ticketlines ADD COLUMN taxamount DOUBLE DEFAULT 0.0",
+                "ALTER TABLE ticketlines ADD COLUMN commission DOUBLE DEFAULT 0.0",
+                "ALTER TABLE ticketlines ADD COLUMN cardid VARCHAR(255) NULL",
+                "ALTER TABLE ticketlines ADD COLUMN discounted BOOLEAN DEFAULT FALSE"
+            };
+            for (String sql : ticketlinesCols) {
+                try {
+                    stmt.execute(sql);
+                } catch (SQLException ex) {
+                    // Column already exists, ignore
+                }
+            }
+
+            // 10. Ensure tickets table has all required columns
+            String[] ticketsCols = {
+                "ALTER TABLE tickets ADD COLUMN waiter VARCHAR(255) NULL",
+                "ALTER TABLE tickets ADD COLUMN terminal VARCHAR(255) NULL",
+                "ALTER TABLE tickets ADD COLUMN taxinclusive BOOLEAN DEFAULT TRUE",
+                "ALTER TABLE tickets ADD COLUMN ecardnumber VARCHAR(255) NULL",
+                "ALTER TABLE tickets ADD COLUMN ecardbalance INT DEFAULT 0",
+                "ALTER TABLE tickets ADD COLUMN earnpoints INT DEFAULT 0",
+                "ALTER TABLE tickets ADD COLUMN burnpoints INT DEFAULT 0",
+                "ALTER TABLE tickets ADD COLUMN currentdebt DOUBLE DEFAULT 0.0",
+                "ALTER TABLE tickets ADD COLUMN location VARCHAR(255) NULL",
+                "ALTER TABLE tickets ADD COLUMN ticketdiscount DOUBLE DEFAULT 0.0",
+                "ALTER TABLE tickets ADD COLUMN cardfees DOUBLE DEFAULT 0.0",
+                "ALTER TABLE tickets ADD COLUMN tlvcode VARCHAR(1000) NULL",
+                "ALTER TABLE tickets ADD COLUMN ticketowner VARCHAR(255) NULL",
+                "ALTER TABLE tickets ADD COLUMN tabledetails VARCHAR(1000) NULL",
+                "ALTER TABLE tickets ADD COLUMN pickupid INT DEFAULT 0"
+            };
+            for (String sql : ticketsCols) {
+                try {
+                    stmt.execute(sql);
+                } catch (SQLException ex) {
+                    // Column already exists, ignore
+                }
+            }
+
+            // 11. Ensure receipts table has all required columns
+            String[] receiptsCols = {
+                "ALTER TABLE receipts ADD COLUMN datenew DATETIME NULL",
+                "ALTER TABLE receipts ADD COLUMN attributes MEDIUMBLOB NULL",
+                "ALTER TABLE receipts ADD COLUMN person VARCHAR(36) NULL"
+            };
+            for (String sql : receiptsCols) {
+                try {
+                    stmt.execute(sql);
+                } catch (SQLException ex) {
+                    // Column already exists, ignore
+                }
+            }
+
+            // 12. Ensure payments table has all required columns
+            String[] paymentsCols = {
+                "ALTER TABLE payments ADD COLUMN description VARCHAR(255) NULL",
+                "ALTER TABLE payments ADD COLUMN transid VARCHAR(255) NULL",
+                "ALTER TABLE payments ADD COLUMN returnmsg MEDIUMBLOB NULL",
+                "ALTER TABLE payments ADD COLUMN tendered DOUBLE DEFAULT 0.0",
+                "ALTER TABLE payments ADD COLUMN cardname VARCHAR(255) NULL",
+                "ALTER TABLE payments ADD COLUMN ecardnumber VARCHAR(255) NULL",
+                "ALTER TABLE payments ADD COLUMN ecardbalance DOUBLE DEFAULT 0.0"
+            };
+            for (String sql : paymentsCols) {
+                try {
+                    stmt.execute(sql);
+                } catch (SQLException ex) {
+                    // Column already exists, ignore
+                }
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseRepair.class.getName()).log(Level.SEVERE, "Database connection error in repairSiteGuid", ex);
+        } finally {
+            if (stmt != null) {
+                try { stmt.close(); } catch (SQLException e) {}
+            }
+        }
+    }
+
 }
+
