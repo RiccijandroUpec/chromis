@@ -1,85 +1,78 @@
 @echo off
-title ChromisPOS Ecuador
+title ChromisPOS Ecuador v1.5.5
 cd /d "%~dp0"
 
-:: Configurar título de la ventana
-title ChromisPOS Ecuador v1.5.5 - Punto de Venta
+:: ============================================================
+:: ChromisPOS Ecuador - Launcher Profesional
+:: Usa classpath en lugar de -jar para cargar FlatLaf, PDFBox,
+:: y todas las librerias externas correctamente.
+:: ============================================================
 
-:: Colores
+setlocal enabledelayedexpansion
+
 set "CYAN=[36m"
 set "GREEN=[32m"
 set "YELLOW=[33m"
 set "RED=[31m"
 set "RESET=[0m"
 
-echo %CYAN%╔══════════════════════════════════════════════════╗%RESET%
-echo %CYAN%║         ChromisPOS Ecuador v1.5.5               ║%RESET%
-echo %CYAN%║     Punto de Venta Open Source para Ecuador     ║%RESET%
-echo %CYAN%║     Autor: Riccijandro - SRI Integrado          ║%RESET%
-echo %CYAN%╚══════════════════════════════════════════════════╝%RESET%
+echo %CYAN%============================================%RESET%
+echo %CYAN%   ChromisPOS Ecuador v1.5.5%RESET%
+echo %CYAN%   Punto de Venta para Ecuador%RESET%
+echo %CYAN%   Autor: Riccijandro - SRI Integrado%RESET%
+echo %CYAN%============================================%RESET%
 echo.
 
 :: Verificar si existe chromispos.jar
 if not exist "chromispos.jar" (
     echo %RED%[ERROR] No se encuentra chromispos.jar%RESET%
     echo.
-    echo %YELLOW%Asegurese de ejecutar este archivo desde la carpeta%RESET%
-    echo %YELLOW%donde esta instalado ChromisPOS Ecuador.%RESET%
-    echo.
     pause
     exit /b 1
 )
 
-:: Verificar Java
+:: Buscar Java
 set JAVA_EXE=java
-set JAVA_OPTS=
 
-:: Buscar JRE empaquetado primero
 if exist "jre\bin\javaw.exe" (
     set "JAVA_EXE=jre\bin\javaw.exe"
 ) else if exist "jre\bin\java.exe" (
     set "JAVA_EXE=jre\bin\java.exe"
 ) else (
     where java >nul 2>nul
-    if %ERRORLEVEL% NEQ 0 (
+    if !ERRORLEVEL! NEQ 0 (
         echo %RED%[ERROR] Java no encontrado%RESET%
-        echo.
-        echo %YELLOW%ChromisPOS Ecuador requiere Java 11 o superior.%RESET%
-        echo %YELLOW%Descargue Java desde: https://adoptium.net/%RESET%
-        echo.
+        echo Descargue Java 11+ desde: https://adoptium.net/
         pause
         exit /b 1
     )
 )
 
-:: Verificar versión de Java
+:: Mostrar version de Java
 for /f "tokens=3" %%g in ('"%JAVA_EXE%" -version 2^>^&1 ^| findstr /i "version"') do (
     set JAVA_VERSION=%%g
 )
-set JAVA_VERSION=%JAVA_VERSION:"=%
-echo %GREEN%[OK] Java version: %JAVA_VERSION%%RESET%
+echo %GREEN%[OK] Java version: %JAVA_VERSION:"=%%RESET%
 
-:: Configurar opciones de memoria
-set JAVA_OPTS=-Xms256m -Xmx1024m
+:: Construir classpath con todas las librerias
+set CLASSPATH=build\classes;chromispos.jar
+for %%f in (lib\*.jar) do set CLASSPATH=!CLASSPATH!;%%f
 
-:: Configurar opciones de look and feel
-set JAVA_OPTS=%JAVA_OPTS% -Dflatlaf.animation=true
+:: Opciones de JVM
+set JAVA_OPTS=-Xms256m -Xmx1024m -Dflatlaf.animation=true -Duser.country=EC -Duser.language=es -Duser.timezone=America/Guayaquil
 
-:: Modo debug (opcional)
+:: Modo debug
 if "%1"=="-debug" (
-    echo %YELLOW>Modo DEBUG activado%RESET%
-    set JAVA_OPTS=%JAVA_OPTS% -Ddebug=true
+    echo %YELLOW%Modo DEBUG activado%RESET%
     if not exist "logs" mkdir logs
-    echo.
-    echo %YELLOW%Iniciando ChromisPOS en modo debug...%RESET%
-    echo %YELLOW%Los logs se guardaran en: logs\POSS.log%RESET%
-    echo.
-    "%JAVA_EXE%" %JAVA_OPTS% -jar chromispos.jar -debug
+    "%JAVA_EXE%" %JAVA_OPTS% -cp "!CLASSPATH!" uk.chromis.pos.forms.StartPOS > logs\POS.log 2>&1
+    echo %GREEN%Logs en logs\POS.log%RESET%
 ) else (
     echo.
     echo %GREEN%Iniciando ChromisPOS Ecuador...%RESET%
     echo.
-    start "" "%JAVA_EXE%" %JAVA_OPTS% -jar chromispos.jar
+    start "" "%JAVA_EXE%" %JAVA_OPTS% -cp "!CLASSPATH!" uk.chromis.pos.forms.StartPOS
 )
 
+echo %GREEN%[OK] ChromisPOS iniciado correctamente%RESET%
 exit /b 0
