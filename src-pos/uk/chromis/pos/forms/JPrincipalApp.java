@@ -1,4 +1,4 @@
-﻿/*
+/*
 **    Chromis POS  - Open Source Point of Sale
 **
 **    This file is part of Chromis POS Version Chromis V1.5.4
@@ -123,18 +123,29 @@ public class JPrincipalApp extends javax.swing.JPanel implements AppUserView {
         m_jPanelContainer.add(new JPanel(), "<NULL>");
         showView("<NULL>");
 
-        try {
-            String menuText = m_dlSystem.getResourceAsText("Menu.Root");
+                try {
+            // CHROMIS ECUADOR: Intentar cargar Menu.Root.txt local primero (menu completo)
+            String menuText = StringUtils.readResource("/uk/chromis/pos/templates/Menu.Root.txt");
             if (menuText == null || menuText.trim().isEmpty()) {
-                throw new ScriptException("Menu.Root is empty in database");
+                throw new Exception("Menu.Root.txt is empty");
             }
+            menuList.clear();
             m_jPanelLeft.setViewportView(getScriptMenu(menuText));
-        } catch (ScriptException e) {
+        } catch (Exception e) {
+            // Fallback: cargar desde base de datos
             try {
-                menuList.clear();
-                m_jPanelLeft.setViewportView(getScriptMenu(StringUtils.readResource("/uk/chromis/pos/templates/Menu.Root.txt")));
-            } catch (IOException | ScriptException ex) {
-                logger.log(Level.SEVERE, "Cannot read default menu", ex);
+                String menuText = m_dlSystem.getResourceAsText("Menu.Root");
+                if (menuText == null || menuText.trim().isEmpty()) {
+                    throw new ScriptException("Menu.Root is empty in database");
+                }
+                m_jPanelLeft.setViewportView(getScriptMenu(menuText));
+            } catch (ScriptException ex) {
+                try {
+                    menuList.clear();
+                    m_jPanelLeft.setViewportView(getScriptMenu(StringUtils.readResource("/uk/chromis/pos/templates/Menu.Root.txt")));
+                } catch (IOException | ScriptException ex2) {
+                    logger.log(Level.SEVERE, "Cannot read default menu", ex2);
+                }
             }
         }
 
