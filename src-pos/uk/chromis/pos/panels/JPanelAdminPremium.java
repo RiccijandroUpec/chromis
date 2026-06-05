@@ -30,7 +30,8 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -55,110 +56,54 @@ import uk.chromis.pos.forms.JPanelView;
 public class JPanelAdminPremium extends JPanel implements JPanelView {
 
     private final AppView appView;
-    private JPanel contentPanel;
-    private JPanel mainPanel;
+        private JPanel contentPanel;
 
-    public JPanelAdminPremium(AppView appView) {
+        public JPanelAdminPremium(AppView appView) {
         this.appView = appView;
         setLayout(new BorderLayout());
         setBackground(new Color(245, 245, 245));
         initUI();
     }
 
-    private void initUI() {
-        // Header with gradient
+    private void showScreen(String taskClass) {
+        if (appView != null && appView.getAppUserView() != null) {
+            appView.getAppUserView().showTask(taskClass);
+        }
+    }
+
+        private void initUI() {
         JPanel headerPanel = createHeaderPanel();
         add(headerPanel, BorderLayout.NORTH);
 
-        // Main content area with scroll
         contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBackground(new Color(245, 245, 245));
 
-        // Add all sections - COMPLETAMENTE EXPANDIDO
-        contentPanel.add(createSection("📦 INVENTARIO & CATÁLOGO", new String[][]{
-            {"menu.products", "products.png", "Gestionar productos del catálogo"},
-            {"menu.categories", "category.png", "Organizar categorías de productos"},
-            {"menu.stocks", "stock.png", "Control de existencias"},
-            {"menu.providers", "provider.png", "Gestionar proveedores"},
-            {"menu.composition", "composition.png", "Composición de productos"}
+        // SECCION 1: VENTAS
+        contentPanel.add(createSection("\uD83D\uDCB0 VENTAS", new String[][]{
+            {"Nueva Venta", "sale.png", "Iniciar venta en POS", "uk.chromis.pos.sales.JPanelTicketSales"},
+            {"Devoluciones", "saleedit.png", "Procesar devoluciones", "uk.chromis.pos.sales.JPanelTicketEdits"},
+            {"Pagos", "payments.png", "M\u00E9todos de pago", "uk.chromis.pos.panels.JPanelPayments"},
+            {"Cierre de Caja", "calculator.png", "Cerrar caja", "uk.chromis.pos.panels.JPanelCloseMoney"}
         }));
 
-        contentPanel.add(createSection("👥 PERSONAL & PERMISOS", new String[][]{
-            {"menu.users", "user.png", "Administrar usuarios y empleados"},
-            {"menu.permissions", "permissions.png", "Configurar permisos de acceso"},
-            {"menu.roles", "roles.png", "Definir roles del sistema"},
-            {"menu.presence", "presence.png", "Control de presencia"},
-            {"menu.salaries", "salary.png", "Gestión de salarios"}
+        // SECCION 2: FACTURACION SRI
+        contentPanel.add(createSection("\uD83D\uDCCB FACTURACI\u00D3N SRI", new String[][]{
+            {"Configuraci\u00F3n SRI", "config.png", "Configurar datos SRI", "uk.chromis.pos.setup.JPanelConfigEcuador"},
+            {"Gesti\u00F3n Facturas", "sales_print.png", "Facturas electr\u00F3nicas", "uk.chromis.pos.invoice.forms.InvoiceListPanel"}
         }));
 
-        contentPanel.add(createSection("💰 IMPUESTOS & FINANCIERO", new String[][]{
-            {"menu.taxes", "tax.png", "Configurar impuestos"},
-            {"menu.discounts", "discount.png", "Gestionar descuentos"},
-            {"menu.pricing", "price.png", "Estrategia de precios"},
-            {"menu.payments", "payment.png", "Métodos de pago"},
-            {"menu.currencies", "currency.png", "Gestionar monedas"}
+        // SECCION 3: ADMINISTRACION
+        contentPanel.add(createSection("\uD83D\uDD27 ADMINISTRACI\u00D3N", new String[][]{
+            {"Dashboard", "dashboard.png", "Panel central", "uk.chromis.pos.panels.JPanelDashboardCentral"},
+            {"Admin Central", "config.png", "Admin con tabs", "uk.chromis.pos.panels.JPanelAdminCentral"},
+            {"Empleados", "timer.png", "Control de presencia", "uk.chromis.pos.epm.JPanelEmployeePresence"},
+            {"Impresoras", "printer.png", "Configurar impresoras", "uk.chromis.pos.panels.JPanelPrinter"}
         }));
 
-        contentPanel.add(createSection("⚙️ CONFIGURACIÓN DEL SISTEMA", new String[][]{
-            {"menu.configuration", "config.png", "Configuración general"},
-            {"menu.database", "database.png", "Configurar base de datos"},
-            {"menu.server", "server.png", "Configurar servidor"},
-            {"menu.receipt", "receipt.png", "Personalizar recibos"},
-            {"menu.printing", "printer.png", "Configurar impresoras"},
-            {"menu.display", "display.png", "Pantalla del cliente"},
-            {"menu.locales", "locale.png", "Idioma y localización"}
-        }));
-
-        contentPanel.add(createSection("📊 REPORTES & ESTADÍSTICAS", new String[][]{
-            {"menu.sales", "sales.png", "Reportes de ventas"},
-            {"menu.inventory", "inventory.png", "Reportes de inventario"},
-            {"menu.customers", "customers.png", "Análisis de clientes"},
-            {"menu.profits", "profit.png", "Análisis de ganancias"},
-            {"menu.charts", "charts.png", "Gráficos y estadísticas"},
-            {"menu.audits", "audit.png", "Auditoría de transacciones"}
-        }));
-
-        contentPanel.add(createSection("💾 INTEGRACIÓN & DATOS", new String[][]{
-            {"menu.backup", "backup.png", "Copias de seguridad"},
-            {"menu.restore", "restore.png", "Restaurar datos"},
-            {"menu.export", "export.png", "Exportar datos"},
-            {"menu.import", "import.png", "Importar datos"},
-            {"menu.sync", "sync.png", "Sincronización"},
-            {"menu.cloud", "cloud.png", "Servicios en nube"}
-        }));
-
-        contentPanel.add(createSection("📋 FACTURACIÓN ELECTRÓNICA", new String[][]{
-            {"menu.invoice", "invoice.png", "Configurar facturación"},
-            {"menu.sri", "sri.png", "Integración SRI"},
-            {"menu.certificates", "certificate.png", "Certificados digitales"},
-            {"menu.invoice_templates", "template.png", "Plantillas de facturas"},
-            {"menu.fiscal", "fiscal.png", "Configuración fiscal"}
-        }));
-
-        contentPanel.add(createSection("🔧 MANTENIMIENTO & SOPORTE", new String[][]{
-            {"menu.db_maintenance", "dbmaint.png", "Mantenimiento de BD"},
-            {"menu.logs", "logs.png", "Ver registros del sistema"},
-            {"menu.performance", "perf.png", "Monitoreo de rendimiento"},
-            {"menu.cache", "cache.png", "Gestión de caché"},
-            {"menu.cleanup", "cleanup.png", "Limpieza de datos"},
-            {"menu.updates", "update.png", "Actualizaciones"}
-        }));
-
-        contentPanel.add(createSection("🔐 SEGURIDAD", new String[][]{
-            {"menu.security", "security.png", "Configuración de seguridad"},
-            {"menu.backups", "backup.png", "Política de backups"},
-            {"menu.encryption", "encryption.png", "Encriptación de datos"},
-            {"menu.password", "password.png", "Política de contraseñas"},
-            {"menu.session", "session.png", "Gestión de sesiones"}
-        }));
-
-        contentPanel.add(createSection("ℹ️ INFORMACIÓN & AYUDA", new String[][]{
-            {"menu.about", "about.png", "Información del sistema"},
-            {"menu.version", "version.png", "Versión y actualizaciones"},
-            {"menu.license", "license.png", "Licencias"},
-            {"menu.help", "help.png", "Centro de ayuda"},
-            {"menu.support", "support.png", "Contactar soporte"}
+        // SECCION 4: SISTEMA
+        contentPanel.add(createSection("\u2699\uFE0F SISTEMA", new String[][]{
+            {"Respaldo y Restauraci\u00F3n", "backup.png", "Copias de seguridad", "uk.chromis.pos.forms.BackupRestoreDialog"}
         }));
 
         contentPanel.add(Box.createVerticalGlue());
@@ -194,19 +139,20 @@ public class JPanelAdminPremium extends JPanel implements JPanelView {
         return header;
     }
 
+        /**
+     * Creates a section with items. Each item is String[]{label, iconName, description, taskClass}
+     */
     private JPanel createSection(String title, String[][] items) {
         JPanel sectionPanel = new JPanel();
         sectionPanel.setLayout(new BoxLayout(sectionPanel, BoxLayout.Y_AXIS));
         sectionPanel.setBackground(new Color(245, 245, 245));
         sectionPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Section header
-        JLabel sectionTitle = new JLabel("■ " + title);
+        JLabel sectionTitle = new JLabel("\u25A0 " + title);
         sectionTitle.setFont(new Font("Arial", Font.BOLD, 14));
         sectionTitle.setForeground(new Color(41, 128, 185));
         sectionPanel.add(sectionTitle);
 
-        // Items container
         JPanel itemsContainer = new JPanel();
         itemsContainer.setLayout(new BoxLayout(itemsContainer, BoxLayout.Y_AXIS));
         itemsContainer.setBackground(Color.WHITE);
@@ -218,7 +164,9 @@ public class JPanelAdminPremium extends JPanel implements JPanelView {
                 sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
                 itemsContainer.add(sep);
             }
-            itemsContainer.add(createItemButton(items[i][0], items[i][1], items[i][2]));
+            // items[i][3] = taskClass (or null)
+            String taskClass = items[i].length > 3 ? items[i][3] : null;
+            itemsContainer.add(createItemButton(items[i][0], items[i][1], items[i][2], taskClass));
         }
 
         sectionPanel.add(itemsContainer);
@@ -227,7 +175,7 @@ public class JPanelAdminPremium extends JPanel implements JPanelView {
         return sectionPanel;
     }
 
-    private JPanel createItemButton(String labelKey, String iconName, String description) {
+    private JPanel createItemButton(String label, String iconName, String description, String taskClass) {
         JPanel itemPanel = new JPanel();
         itemPanel.setLayout(new BorderLayout());
         itemPanel.setBackground(Color.WHITE);
@@ -251,7 +199,7 @@ public class JPanelAdminPremium extends JPanel implements JPanelView {
         textPanel.setOpaque(false);
         textPanel.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 15));
 
-        JLabel titleLabel = new JLabel(AppLocal.getIntString(labelKey));
+                JLabel titleLabel = new JLabel(label);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 12));
         titleLabel.setForeground(new Color(41, 41, 41));
 
@@ -263,8 +211,7 @@ public class JPanelAdminPremium extends JPanel implements JPanelView {
         textPanel.add(descLabel);
         itemPanel.add(textPanel, BorderLayout.CENTER);
 
-        // Action button
-        JButton actionBtn = new JButton("▶");
+        JButton actionBtn = new JButton("\u25B6");
         actionBtn.setFont(new Font("Arial", Font.PLAIN, 14));
         actionBtn.setBackground(new Color(52, 152, 219));
         actionBtn.setForeground(Color.WHITE);
@@ -272,23 +219,42 @@ public class JPanelAdminPremium extends JPanel implements JPanelView {
         actionBtn.setFocusPainted(false);
         actionBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
+        // Wire button + panel click to open screen
+        if (taskClass != null) {
+            actionBtn.addActionListener((ActionEvent e) -> showScreen(taskClass));
+            itemPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    showScreen(taskClass);
+                }
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    itemPanel.setBackground(new Color(240, 248, 255));
+                    actionBtn.setBackground(new Color(41, 128, 185));
+                }
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    itemPanel.setBackground(Color.WHITE);
+                    actionBtn.setBackground(new Color(52, 152, 219));
+                }
+            });
+        } else {
+            itemPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    itemPanel.setBackground(new Color(240, 248, 255));
+                    actionBtn.setBackground(new Color(41, 128, 185));
+                }
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    itemPanel.setBackground(Color.WHITE);
+                    actionBtn.setBackground(new Color(52, 152, 219));
+                }
+            });
+        }
+
         itemPanel.add(actionBtn, BorderLayout.EAST);
-
-        // Mouse hover effects
         itemPanel.setOpaque(true);
-        itemPanel.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                itemPanel.setBackground(new Color(240, 248, 255));
-                actionBtn.setBackground(new Color(41, 128, 185));
-            }
-
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                itemPanel.setBackground(Color.WHITE);
-                actionBtn.setBackground(new Color(52, 152, 219));
-            }
-        });
 
         return itemPanel;
     }

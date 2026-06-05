@@ -1,4 +1,4 @@
-// MAIN
+// MAIN - Ventas
 group = menu.addGroup("menu.main");
         group.addPanel("sale.png", "menu.ticket", "uk.chromis.pos.sales.JPanelTicketSales");
         group.addPanel("saleedit.png", "menu.ticketEdit", "uk.chromis.pos.sales.JPanelTicketEdits");
@@ -7,6 +7,12 @@ group = menu.addGroup("menu.main");
         group.addPanel("calculator.png", "menu.closeCash", "uk.chromis.pos.panels.JPanelCloseMoney");
 	group.addPanel("printer.png", "menu.printer", "uk.chromis.pos.panels.JPanelPrinter");
     	group.addPanel("timer.png", "menu.checkInCheckOut", "uk.chromis.pos.epm.JPanelEmployeePresence");
+
+// ADMINISTRACION
+group = menu.addGroup("Administración");
+        group.addPanel("dashboard.png", "Dashboard Central", "uk.chromis.pos.panels.JPanelDashboardCentral");
+        group.addPanel("config.png", "Admin Premium", "uk.chromis.pos.panels.JPanelAdminPremium");
+        group.addPanel("config.png", "Admin Central", "uk.chromis.pos.panels.JPanelAdminCentral");
 
 // ECUADOR SRI
 group = menu.addGroup("Configuración ChromisEC");

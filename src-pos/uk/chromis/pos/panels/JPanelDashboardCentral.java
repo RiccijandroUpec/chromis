@@ -31,6 +31,7 @@ import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
@@ -99,10 +100,6 @@ public class JPanelDashboardCentral extends JPanel implements JPanelView {
         contentPanel.add(createFiscalLegalSection());
         contentPanel.add(Box.createVerticalStrut(15));
 
-        // Integration Section
-        contentPanel.add(createIntegrationSection());
-        contentPanel.add(Box.createVerticalStrut(15));
-
         // Security Section
         contentPanel.add(createSecuritySection());
         contentPanel.add(Box.createVerticalStrut(15));
@@ -163,19 +160,26 @@ public class JPanelDashboardCentral extends JPanel implements JPanelView {
         cardsPanel.setLayout(new BoxLayout(cardsPanel, BoxLayout.X_AXIS));
         cardsPanel.setOpaque(false);
 
-        cardsPanel.add(createQuickCard("Productos", "📦", new Color(46, 204, 113)));
+                cardsPanel.add(createQuickCard("Nueva Venta", "\uD83D\uDCB0", new Color(46, 204, 113), "uk.chromis.pos.sales.JPanelTicketSales"));
         cardsPanel.add(Box.createHorizontalStrut(10));
-        cardsPanel.add(createQuickCard("Usuarios", "👥", new Color(52, 152, 219)));
+        cardsPanel.add(createQuickCard("Cierre Caja", "\uD83D\uDCCB", new Color(52, 152, 219), "uk.chromis.pos.panels.JPanelCloseMoney"));
         cardsPanel.add(Box.createHorizontalStrut(10));
-        cardsPanel.add(createQuickCard("Reportes", "📈", new Color(155, 89, 182)));
+        cardsPanel.add(createQuickCard("Admin Premium", "\uD83D\uDD27", new Color(155, 89, 182), "uk.chromis.pos.panels.JPanelAdminPremium"));
         cardsPanel.add(Box.createHorizontalStrut(10));
-        cardsPanel.add(createQuickCard("Configuración", "⚙️", new Color(230, 126, 34)));
+        cardsPanel.add(createQuickCard("Config SRI", "\u2699\uFE0F", new Color(230, 126, 34), "uk.chromis.pos.setup.JPanelConfigEcuador"));
 
         section.add(cardsPanel);
         return section;
     }
 
-    private JPanel createQuickCard(String title, String icon, Color bgColor) {
+    // Helper: open a real functional screen via AppView
+    private void showScreen(String taskClass) {
+        if (appView != null && appView.getAppUserView() != null) {
+            appView.getAppUserView().showTask(taskClass);
+        }
+    }
+
+    private JPanel createQuickCard(String title, String icon, Color bgColor, String taskClass) {
         JPanel card = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -208,7 +212,11 @@ public class JPanelDashboardCentral extends JPanel implements JPanelView {
         card.add(Box.createVerticalStrut(5));
         card.add(titleLabel);
 
-        card.addMouseListener(new MouseAdapter() {
+                card.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                showScreen(taskClass);
+            }
             @Override
             public void mouseEntered(MouseEvent e) {
                 card.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
@@ -221,6 +229,11 @@ public class JPanelDashboardCentral extends JPanel implements JPanelView {
         });
 
         return card;
+    }
+
+    // Overloaded for backward compatibility (no action)
+    private JPanel createQuickCard(String title, String icon, Color bgColor) {
+        return createQuickCard(title, icon, bgColor, null);
     }
 
     private JPanel createCommonOperationsSection() {
@@ -239,17 +252,10 @@ public class JPanelDashboardCentral extends JPanel implements JPanelView {
         itemsPanel.setBackground(Color.WHITE);
         itemsPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
 
-        String[][] operations = {
-            {"Nueva Venta", "Iniciar una nueva transacción de venta"},
-            {"Devoluciones", "Procesar devoluciones de productos"},
-            {"Cierre de Caja", "Cerrar caja y generar reportes"},
-            {"Corte de Turno", "Finalizar turno del empleado"}
-        };
-
-        for (int i = 0; i < operations.length; i++) {
-            if (i > 0) itemsPanel.add(new JSeparator());
-            itemsPanel.add(createOperationItem(operations[i][0], operations[i][1]));
-        }
+                addOperationItem(itemsPanel, "Nueva Venta", "Iniciar una nueva transacci\u00F3n de venta", "uk.chromis.pos.sales.JPanelTicketSales");
+        addOperationItem(itemsPanel, "Devoluciones", "Procesar devoluciones de productos", "uk.chromis.pos.sales.JPanelTicketEdits");
+        addOperationItem(itemsPanel, "Cierre de Caja", "Cerrar caja y generar reportes", "uk.chromis.pos.panels.JPanelCloseMoney");
+        addOperationItem(itemsPanel, "Corte de Turno", "Finalizar turno del empleado", "uk.chromis.pos.epm.JPanelEmployeePresence");
 
         section.add(itemsPanel);
         return section;
@@ -271,17 +277,10 @@ public class JPanelDashboardCentral extends JPanel implements JPanelView {
         itemsPanel.setBackground(Color.WHITE);
         itemsPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
 
-        String[][] settings = {
-            {"Impuestos", "Configurar tasas de impuestos aplicables"},
-            {"Impresoras", "Administrar conexiones de impresoras"},
-            {"Recibos", "Personalizar formato de recibos"},
-            {"Usuarios", "Gestionar usuarios del sistema"}
-        };
-
-        for (int i = 0; i < settings.length; i++) {
-            if (i > 0) itemsPanel.add(new JSeparator());
-            itemsPanel.add(createSettingItem(settings[i][0], settings[i][1]));
-        }
+                addSettingItem(itemsPanel, "Configuraci\u00F3n SRI", "Configuraci\u00F3n fiscal Ecuador", "uk.chromis.pos.setup.JPanelConfigEcuador");
+        addSettingItem(itemsPanel, "Facturas SRI", "Gesti\u00F3n de facturas electr\u00F3nicas", "uk.chromis.pos.invoice.forms.InvoiceListPanel");
+        addSettingItem(itemsPanel, "Impresoras", "Administrar conexiones de impresoras", "uk.chromis.pos.panels.JPanelPrinter");
+        addSettingItem(itemsPanel, "Admin Premium", "Panel de administraci\u00F3n avanzado", "uk.chromis.pos.panels.JPanelAdminPremium");
 
         section.add(itemsPanel);
         return section;
@@ -303,17 +302,7 @@ public class JPanelDashboardCentral extends JPanel implements JPanelView {
         itemsPanel.setBackground(Color.WHITE);
         itemsPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
 
-        String[][] reports = {
-            {"Ventas Diarias", "Reporte de transacciones del día"},
-            {"Inventario", "Estado actual del inventario"},
-            {"Clientes", "Análisis de clientes y compras"},
-            {"Financiero", "Resumen financiero y ganancias"}
-        };
-
-        for (int i = 0; i < reports.length; i++) {
-            if (i > 0) itemsPanel.add(new JSeparator());
-            itemsPanel.add(createReportItem(reports[i][0], reports[i][1]));
-        }
+                itemsPanel.add(createReportItem("Cierre de Caja", "Ventas y cierre del d\u00EDa", "uk.chromis.pos.panels.JPanelCloseMoney"));
 
         section.add(itemsPanel);
         return section;
@@ -335,18 +324,9 @@ public class JPanelDashboardCentral extends JPanel implements JPanelView {
         itemsPanel.setBackground(Color.WHITE);
         itemsPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
 
-        String[][] dbItems = {
-            {"Conexión a Base de Datos", "Configurar servidor MySQL/PostgreSQL"},
-            {"Credenciales", "Usuario, contraseña y base de datos"},
-            {"Respaldo de BD", "Crear copias de seguridad automáticas"},
-            {"Mantenimiento", "Optimización y limpiezade BD"},
-            {"Recuperación", "Restaurar datos desde backup"}
-        };
-
-        for (int i = 0; i < dbItems.length; i++) {
-            if (i > 0) itemsPanel.add(new JSeparator());
-            itemsPanel.add(createSettingItem(dbItems[i][0], dbItems[i][1]));
-        }
+                itemsPanel.add(createSettingItem("Respaldo de BD", "Crear copias de seguridad", "uk.chromis.pos.forms.BackupRestoreDialog"));
+        itemsPanel.add(new JSeparator());
+        itemsPanel.add(createSettingItem("Restaurar BD", "Restaurar datos desde backup", "uk.chromis.pos.forms.BackupRestoreDialog"));
 
         section.add(itemsPanel);
         return section;
@@ -368,57 +348,17 @@ public class JPanelDashboardCentral extends JPanel implements JPanelView {
         itemsPanel.setBackground(Color.WHITE);
         itemsPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
 
-        String[][] fiscalItems = {
-            {"Configuración Fiscal", "Datos del negocio y contribuyente"},
-            {"Certificado Digital", "Certificados para SRI"},
-            {"Facturación SRI", "Integración con sistema de rentas"},
-            {"Plantillas de Facturas", "Diseño de recibos y facturas"},
-            {"Comprobantes", "Configurar tipos de comprobantes"}
-        };
-
-        for (int i = 0; i < fiscalItems.length; i++) {
-            if (i > 0) itemsPanel.add(new JSeparator());
-            itemsPanel.add(createSettingItem(fiscalItems[i][0], fiscalItems[i][1]));
-        }
+                itemsPanel.add(createSettingItem("Configuraci\u00F3n SRI", "Datos del negocio y SRI", "uk.chromis.pos.setup.JPanelConfigEcuador"));
+        itemsPanel.add(new JSeparator());
+        itemsPanel.add(createSettingItem("Gesti\u00F3n Facturas SRI", "Facturas electr\u00F3nicas", "uk.chromis.pos.invoice.forms.InvoiceListPanel"));
+        itemsPanel.add(new JSeparator());
+        itemsPanel.add(createSettingItem("Pagos", "M\u00E9todos de pago", "uk.chromis.pos.panels.JPanelPayments"));
 
         section.add(itemsPanel);
         return section;
     }
 
-    private JPanel createIntegrationSection() {
-        JPanel section = new JPanel();
-        section.setLayout(new BoxLayout(section, BoxLayout.Y_AXIS));
-        section.setBackground(new Color(245, 245, 245));
-        section.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        JLabel sectionTitle = new JLabel("🔄 INTEGRACIONES & SINCRONIZACIÓN");
-        sectionTitle.setFont(new Font("Arial", Font.BOLD, 14));
-        sectionTitle.setForeground(new Color(52, 73, 94));
-        section.add(sectionTitle);
-
-        JPanel itemsPanel = new JPanel();
-        itemsPanel.setLayout(new BoxLayout(itemsPanel, BoxLayout.Y_AXIS));
-        itemsPanel.setBackground(Color.WHITE);
-        itemsPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
-
-        String[][] integrationItems = {
-            {"Importar/Exportar", "Datos en formatos CSV, Excel, XML"},
-            {"Sincronización", "Sincronizar con otros sistemas"},
-            {"Cloud Storage", "Copias en la nube"},
-            {"APIs", "Configuración de interfaces"},
-            {"Webhooks", "Notificaciones automáticas"}
-        };
-
-        for (int i = 0; i < integrationItems.length; i++) {
-            if (i > 0) itemsPanel.add(new JSeparator());
-            itemsPanel.add(createSettingItem(integrationItems[i][0], integrationItems[i][1]));
-        }
-
-        section.add(itemsPanel);
-        return section;
-    }
-
-    private JPanel createSecuritySection() {
+        private JPanel createSecuritySection() {
         JPanel section = new JPanel();
         section.setLayout(new BoxLayout(section, BoxLayout.Y_AXIS));
         section.setBackground(new Color(245, 245, 245));
@@ -434,18 +374,7 @@ public class JPanelDashboardCentral extends JPanel implements JPanelView {
         itemsPanel.setBackground(Color.WHITE);
         itemsPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
 
-        String[][] securityItems = {
-            {"Gestión de Usuarios", "Crear y administrar accesos"},
-            {"Roles y Permisos", "Definir qué puede hacer cada usuario"},
-            {"Auditoría", "Registro de todas las operaciones"},
-            {"Contraseñas", "Política de seguridad de contraseñas"},
-            {"Encriptación", "Proteger datos sensibles"}
-        };
-
-        for (int i = 0; i < securityItems.length; i++) {
-            if (i > 0) itemsPanel.add(new JSeparator());
-            itemsPanel.add(createSettingItem(securityItems[i][0], securityItems[i][1]));
-        }
+                itemsPanel.add(createSettingItem("Cambiar Contrase\u00F1a", "Cambiar contrase\u00F1a del usuario actual", "uk.chromis.pos.forms.JPrincipalApp"));
 
         section.add(itemsPanel);
         return section;
@@ -467,36 +396,47 @@ public class JPanelDashboardCentral extends JPanel implements JPanelView {
         itemsPanel.setBackground(Color.WHITE);
         itemsPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
 
-        String[][] maintenanceItems = {
-            {"Limpieza de Datos", "Eliminar registros obsoletos"},
-            {"Optimización", "Mejorar rendimiento del sistema"},
-            {"Registros", "Ver logs de errores y eventos"},
-            {"Actualización", "Descargar actualizaciones"},
-            {"Información", "Versión y detalles del sistema"}
-        };
-
-        for (int i = 0; i < maintenanceItems.length; i++) {
-            if (i > 0) itemsPanel.add(new JSeparator());
-            itemsPanel.add(createSettingItem(maintenanceItems[i][0], maintenanceItems[i][1]));
-        }
+                itemsPanel.add(createSettingItem("Respaldo y Restauraci\u00F3n", "Copias de seguridad", "uk.chromis.pos.forms.BackupRestoreDialog"));
 
         section.add(itemsPanel);
         return section;
     }
 
+        private void addOperationItem(JPanel itemsPanel, String title, String description, String taskClass) {
+        if (itemsPanel.getComponentCount() > 0) {
+            itemsPanel.add(new JSeparator());
+        }
+        itemsPanel.add(createMenuItem(title, description, "\u25B6", taskClass));
+    }
+
+    private void addSettingItem(JPanel itemsPanel, String title, String description, String taskClass) {
+        if (itemsPanel.getComponentCount() > 0) {
+            itemsPanel.add(new JSeparator());
+        }
+        itemsPanel.add(createMenuItem(title, description, "\u2699\uFE0F", taskClass));
+    }
+
     private JPanel createOperationItem(String title, String description) {
-        return createMenuItem(title, description, "▶");
+        return createMenuItem(title, description, "\u25B6", null);
     }
 
     private JPanel createSettingItem(String title, String description) {
-        return createMenuItem(title, description, "⚙️");
+        return createMenuItem(title, description, "\u2699\uFE0F", null);
+    }
+
+    private JPanel createSettingItem(String title, String description, String taskClass) {
+        return createMenuItem(title, description, "\u2699\uFE0F", taskClass);
+    }
+
+    private JPanel createReportItem(String title, String description, String taskClass) {
+        return createMenuItem(title, description, "\uD83D\uDCCA", taskClass);
     }
 
     private JPanel createReportItem(String title, String description) {
-        return createMenuItem(title, description, "📊");
+        return createMenuItem(title, description, "\uD83D\uDCCA", null);
     }
 
-    private JPanel createMenuItem(String title, String description, String action) {
+    private JPanel createMenuItem(String title, String description, String actionSymbol, String taskClass) {
         JPanel item = new JPanel();
         item.setLayout(new BorderLayout());
         item.setBackground(Color.WHITE);
@@ -519,7 +459,7 @@ public class JPanelDashboardCentral extends JPanel implements JPanelView {
         textPanel.add(descLabel);
         item.add(textPanel, BorderLayout.CENTER);
 
-        JButton btn = new JButton(action);
+        JButton btn = new JButton(actionSymbol);
         btn.setFont(new Font("Arial", Font.PLAIN, 12));
         btn.setBackground(new Color(52, 152, 219));
         btn.setForeground(Color.WHITE);
@@ -527,22 +467,42 @@ public class JPanelDashboardCentral extends JPanel implements JPanelView {
         btn.setFocusPainted(false);
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
+                // Wire button click to open functional screen
+        if (taskClass != null) {
+            btn.addActionListener((ActionEvent e) -> showScreen(taskClass));
+            item.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    showScreen(taskClass);
+                }
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    item.setBackground(new Color(240, 248, 255));
+                    btn.setBackground(new Color(41, 128, 185));
+                }
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    item.setBackground(Color.WHITE);
+                    btn.setBackground(new Color(52, 152, 219));
+                }
+            });
+        } else {
+            item.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    item.setBackground(new Color(240, 248, 255));
+                    btn.setBackground(new Color(41, 128, 185));
+                }
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    item.setBackground(Color.WHITE);
+                    btn.setBackground(new Color(52, 152, 219));
+                }
+            });
+        }
+
         item.add(btn, BorderLayout.EAST);
-
         item.setOpaque(true);
-        item.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                item.setBackground(new Color(240, 248, 255));
-                btn.setBackground(new Color(41, 128, 185));
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                item.setBackground(Color.WHITE);
-                btn.setBackground(new Color(52, 152, 219));
-            }
-        });
 
         return item;
     }

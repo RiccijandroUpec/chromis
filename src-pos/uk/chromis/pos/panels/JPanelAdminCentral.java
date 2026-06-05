@@ -1,9 +1,9 @@
 package uk.chromis.pos.panels;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import uk.chromis.pos.forms.AppLocal;
@@ -13,9 +13,8 @@ import uk.chromis.pos.forms.JPanelView;
 /**
  * Centralized Administration Panel
  *
- * This panel groups together the most used management screens (Products, Categories,
- * Users, Taxes, and System Configuration) into a single tabbed view. It provides a
- * premium look‑and‑feel using the application’s default Font and a dark theme.
+ * Tabbed view grouping real functional screens: SRI Config, Invoice Mgmt,
+ * Admin Premium, Dashboard, Printer, Employee Presence, Payments.
  */
 public class JPanelAdminCentral extends JPanel implements JPanelView {
 
@@ -31,30 +30,38 @@ public class JPanelAdminCentral extends JPanel implements JPanelView {
     }
 
     private void initTabs() {
-        // Products panel – reuse existing product selector if present
-        addTab("menu.products", "products.png", "uk.chromis.pos.inventory.JProductsSelector");
-        // Categories panel – reuse existing category tree
-        addTab("menu.categories", "category.png", "uk.chromis.pos.catalog.JCatalog");
-        // Users / Employees panel – reuse existing user management
-        addTab("menu.users", "user.png", "uk.chromis.pos.setup.JPanelConfigEcuador"); // placeholder for user config
-        // Taxes panel – reuse tax configuration
-        addTab("menu.taxes", "tax.png", "uk.chromis.pos.taxes.JTaxesPanel"); // assumes such class exists
-        // System configuration – the dedicated config UI
-        addTab("Configuración ChromisEC", "config.png", "uk.chromis.pos.setup.JPanelConfigEcuador");
+        // Each tab: {titleKey or label, iconName, panelClass}
+        String[][] tabsDef = {
+            {"Config SRI", "config.png", "uk.chromis.pos.setup.JPanelConfigEcuador"},
+            {"Facturas SRI", "sales_print.png", "uk.chromis.pos.invoice.forms.InvoiceListPanel"},
+            {"Admin Premium", "dashboard.png", "uk.chromis.pos.panels.JPanelAdminPremium"},
+            {"Dashboard", "dashboard.png", "uk.chromis.pos.panels.JPanelDashboardCentral"},
+            {"Impresoras", "printer.png", "uk.chromis.pos.panels.JPanelPrinter"},
+            {"Empleados", "timer.png", "uk.chromis.pos.epm.JPanelEmployeePresence"},
+            {"Pagos", "payments.png", "uk.chromis.pos.panels.JPanelPayments"},
+            {"Cierre Caja", "calculator.png", "uk.chromis.pos.panels.JPanelCloseMoney"}
+        };
+
+        for (String[] tabDef : tabsDef) {
+            addTab(tabDef[0], tabDef[1], tabDef[2]);
+        }
     }
 
-    private void addTab(String titleKey, String iconName, String panelClass) {
+    private void addTab(String title, String iconName, String panelClass) {
         try {
-            String title = AppLocal.getIntString(titleKey);
-            ImageIcon icon = new ImageIcon(getClass().getResource("/uk/chromis/pos/images/" + iconName));
+            ImageIcon icon = null;
+            try {
+                icon = new ImageIcon(getClass().getResource("/uk/chromis/pos/images/" + iconName));
+            } catch (Exception e1) {
+                // icon stays null
+            }
             JPanelView view = (JPanelView) Class.forName(panelClass)
                     .getConstructor(AppView.class)
                     .newInstance(appView);
             JComponent comp = view.getComponent();
             tabs.addTab(title, icon, comp);
         } catch (Exception e) {
-            // If the class cannot be loaded, add a placeholder tab with the error message
-            tabs.addTab(titleKey, null, new javax.swing.JLabel("Error loading " + panelClass + ": " + e.getMessage()));
+            tabs.addTab(title, null, new JLabel("Error: " + e.getMessage()));
         }
     }
 
@@ -70,7 +77,6 @@ public class JPanelAdminCentral extends JPanel implements JPanelView {
 
     @Override
     public void activate() {
-        // No special activation needed – tabs are ready
     }
 
     @Override
