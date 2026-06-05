@@ -77,7 +77,7 @@ public class DataLogicCustomers extends BeanFactoryDataSingle {
     public SentenceList getCustomerList(String siteGuid) {
         if (siteGuid == null) {
             return new StaticSentence(s, new QBFBuilder("select id, taxid, name, postal, email, "
-                    + "phone from customers where active = " + s.DB.TRUE()
+                    + "phone from customers where visible = " + s.DB.TRUE()
                     + " and ?(QBF_FILTER) order by lower (name)",
                     new String[]{"taxid", "name", "postal", "phone", "email"}), new SerializerWriteBasic(new Datas[]{
                 Datas.OBJECT, Datas.STRING,
@@ -99,7 +99,7 @@ public class DataLogicCustomers extends BeanFactoryDataSingle {
             });
         } else {
             return new StaticSentence(s, new QBFBuilder("select id, taxid, name, postal, email, "
-                    + "phone from customers where active = " + s.DB.TRUE() + " and siteguid ='" + siteGuid + "'"
+                    + "phone from customers where visible = " + s.DB.TRUE() + " and siteguid ='" + siteGuid + "'"
                     + " and ?(QBF_FILTER) order by lower (name)",
                     new String[]{"taxid", "name", "postal", "phone", "email"}), new SerializerWriteBasic(new Datas[]{
                 Datas.OBJECT, Datas.STRING,

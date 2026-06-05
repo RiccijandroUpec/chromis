@@ -270,8 +270,10 @@ public class SystemProperty {
         LINESIZE = getInt("LINESIZE");
         LOYALTYEXPIRYPERIOD = getInt("LOYALTYEXPIRYPERIOD");
         PICKUPSIZE = getInt("PICKUPSIZE");
-        PRODUCTBUTTONHEIGHT = getInt("PRODUCTBUTTONHEIGHT");
-        PRODUCTBUTTONWIDTH = getInt("PRODUCTBUTTONWIDTH");
+        int pbw = getInt("PRODUCTBUTTONWIDTH");
+        PRODUCTBUTTONWIDTH = pbw > 0 ? pbw : 110;
+        int pbh = getInt("PRODUCTBUTTONHEIGHT");
+        PRODUCTBUTTONHEIGHT = pbh > 0 ? pbh : 54;
         RECEIPTSIZE = getInt("RECEIPTSIZE");
         REMOVEDLINEDAYS = getInt("REMOVEDLINEDAYS");
         SCRATE = getDouble("SCRATE");

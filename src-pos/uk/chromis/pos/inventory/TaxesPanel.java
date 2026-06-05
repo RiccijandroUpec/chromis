@@ -97,8 +97,7 @@ public class TaxesPanel extends JPanel implements JPanelView {
 
     private void loadData() {
         model.setRowCount(0);
-        String sql = "SELECT t.id, t.name, t.rate, tc.name FROM taxes t "
-                   + "LEFT JOIN taxcategories tc ON t.category = tc.id ORDER BY t.name";
+        String sql = "SELECT id, name, rate FROM taxes ORDER BY name";
         try (Connection conn = appView.getSession().getConnection();
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
@@ -106,7 +105,7 @@ public class TaxesPanel extends JPanel implements JPanelView {
                 model.addRow(new Object[]{
                     rs.getString(1), rs.getString(2),
                     String.format("%.2f%%", rs.getDouble(3) * 100),
-                    rs.getString(4)
+                    ""
                 });
             }
         } catch (SQLException ex) {
@@ -143,19 +142,17 @@ public class TaxesPanel extends JPanel implements JPanelView {
             double rateVal = Double.parseDouble(fRate.getText().trim()) / 100.0;
             if (editRow == null) {
                 PreparedStatement ps = conn.prepareStatement(
-                    "INSERT INTO taxes (id, name, rate, category) VALUES (?,?,?,?)");
+                    "INSERT INTO taxes (id, name, rate) VALUES (?,?,?)");
                 ps.setString(1, UUID.randomUUID().toString());
                 ps.setString(2, fName.getText().trim());
                 ps.setDouble(3, rateVal);
-                ps.setString(4, selCat);
                 ps.executeUpdate();
             } else {
                 PreparedStatement ps = conn.prepareStatement(
-                    "UPDATE taxes SET name=?, rate=?, category=? WHERE id=?");
+                    "UPDATE taxes SET name=?, rate=? WHERE id=?");
                 ps.setString(1, fName.getText().trim());
                 ps.setDouble(2, rateVal);
-                ps.setString(3, selCat);
-                ps.setString(4, id);
+                ps.setString(3, id);
                 ps.executeUpdate();
             }
             loadData();

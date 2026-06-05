@@ -125,7 +125,7 @@ public class ProductsPanel extends JPanel implements JPanelView {
 
     private void loadData(String filter) {
         model.setRowCount(0);
-        String sql = "SELECT p.id, p.reference, p.name, p.pricesell, c.name, p.iscom "
+        String sql = "SELECT p.id, p.reference, p.name, p.pricesell, c.name, p.ispack "
                    + "FROM products p LEFT JOIN categories c ON p.category = c.id "
                    + "WHERE p.name LIKE ? OR p.reference LIKE ? "
                    + "ORDER BY p.name LIMIT 500";
@@ -183,7 +183,7 @@ public class ProductsPanel extends JPanel implements JPanelView {
             if (editRow == null) {
                 String newId = UUID.randomUUID().toString();
                 PreparedStatement ps = conn.prepareStatement(
-                    "INSERT INTO products (id, reference, name, pricesell, category, iscom) VALUES (?,?,?,?,?,0)");
+                    "INSERT INTO products (id, reference, name, pricesell, category, ispack) VALUES (?,?,?,?,?,0)");
                 ps.setString(1, newId);
                 ps.setString(2, fCode.getText().trim());
                 ps.setString(3, fName.getText().trim());

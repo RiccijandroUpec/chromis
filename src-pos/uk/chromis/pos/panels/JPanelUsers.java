@@ -108,7 +108,7 @@ public class JPanelUsers extends JPanel implements JPanelView {
 
     private void loadData(String filter) {
         model.setRowCount(0);
-        String sql = "SELECT p.id, p.name, r.name, p.appuser, p.visible "
+        String sql = "SELECT p.id, p.name, r.name, p.card, p.visible "
                    + "FROM people p LEFT JOIN roles r ON p.role = r.id "
                    + "WHERE p.name LIKE ? ORDER BY p.name LIMIT 200";
         try (Connection conn = appView.getSession().getConnection();
@@ -165,7 +165,7 @@ public class JPanelUsers extends JPanel implements JPanelView {
             if (editRow == null) {
                 String passHash = Hashcypher.hashString(new String(fPass.getPassword()));
                 PreparedStatement ps = conn.prepareStatement(
-                    "INSERT INTO people (id, name, appuser, apppassword, role, visible) VALUES (?,?,?,?,?,?)");
+                    "INSERT INTO people (id, name, card, apppassword, role, visible) VALUES (?,?,?,?,?,?)");
                 ps.setString(1, UUID.randomUUID().toString());
                 ps.setString(2, fName.getText().trim());
                 ps.setString(3, fEmail.getText().trim());
@@ -175,7 +175,7 @@ public class JPanelUsers extends JPanel implements JPanelView {
                 ps.executeUpdate();
             } else {
                 PreparedStatement ps = conn.prepareStatement(
-                    "UPDATE people SET name=?, appuser=?, role=?, visible=? WHERE id=?");
+                    "UPDATE people SET name=?, card=?, role=?, visible=? WHERE id=?");
                 ps.setString(1, fName.getText().trim());
                 ps.setString(2, fEmail.getText().trim());
                 ps.setString(3, selRole);

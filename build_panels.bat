@@ -1,7 +1,7 @@
 @echo off
 setlocal enabledelayedexpansion
 
-set JAVAC="C:\Program Files\Eclipse Adoptium\jdk-8.0.472.8-hotspot\bin\javac.exe"
+set JAVAC="C:\Program Files\Eclipse Adoptium\jdk-11.0.29.7-hotspot\bin\javac.exe"
 set BUILD_DIR=build\classes
 
 if not exist "%BUILD_DIR%" mkdir "%BUILD_DIR%"
@@ -17,11 +17,12 @@ echo Compilando paneles nuevos...
   src-pos\uk\chromis\pos\panels\JPanelRoles.java ^
   src-pos\uk\chromis\pos\panels\JPanelAdminCentral.java ^
   src-pos\uk\chromis\pos\panels\JPanelAdminPremium.java ^
-  src-pos\uk\chromis\pos\config\JPanelConfiguration.java 2>&1
+  src-pos\uk\chromis\pos\config\JPanelConfiguration.java ^
+  src-pos\uk\chromis\pos\datalogic\DataLogicCustomers.java 2>&1
 
 if %ERRORLEVEL% EQU 0 (
     echo OK - Actualizando JAR...
-    "C:\Program Files\Eclipse Adoptium\jdk-8.0.472.8-hotspot\bin\jar.exe" uf chromispos.jar -C %BUILD_DIR% .
+    "C:\Program Files\Eclipse Adoptium\jdk-11.0.29.7-hotspot\bin\jar.exe" uf chromispos.jar -C %BUILD_DIR% .
     echo DONE - JAR actualizado
 ) else (
     echo ERROR de compilacion
