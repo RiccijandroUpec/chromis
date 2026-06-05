@@ -86,6 +86,15 @@ echo src-pos\uk\chromis\pos\forms\JRootApp.java >> sources.txt
 echo src-pos\uk\chromis\pos\sales\JTicketLines.java >> sources.txt
 echo src-pos\uk\chromis\pos\forms\JPrincipalApp.java >> sources.txt
 echo src-beans\uk\chromis\beans\JPasswordDialog.java >> sources.txt
+echo src-pos\uk\chromis\pos\inventory\ProductsPanel.java >> sources.txt
+echo src-pos\uk\chromis\pos\inventory\CategoriesPanel.java >> sources.txt
+echo src-pos\uk\chromis\pos\inventory\TaxesPanel.java >> sources.txt
+echo src-pos\uk\chromis\pos\customers\CustomersPanel.java >> sources.txt
+echo src-pos\uk\chromis\pos\panels\JPanelUsers.java >> sources.txt
+echo src-pos\uk\chromis\pos\panels\JPanelRoles.java >> sources.txt
+echo src-pos\uk\chromis\pos\panels\JPanelAdminCentral.java >> sources.txt
+echo src-pos\uk\chromis\pos\panels\JPanelAdminPremium.java >> sources.txt
+echo src-pos\uk\chromis\pos\config\JPanelConfiguration.java >> sources.txt
 "%JAVA_HOME%\bin\javac.exe" -d "%BUILD_DIR%" -sourcepath "src-pos;src-data;src-beans" -encoding UTF-8 -source 1.8 -target 1.8 -cp "chromispos.jar;lib/*" @sources.txt
 del sources.txt
 

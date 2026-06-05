@@ -1,4 +1,4 @@
-﻿/*
+/*
 **    Chromis POS  - Open Source Point of Sale
 **
 **    This file is part of Chromis POS Version Chromis V1.5.4

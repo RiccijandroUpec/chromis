@@ -18,6 +18,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.nio.file.*;
+import java.util.Properties;
 
 public class SetupWizardDialog extends JDialog {
     
