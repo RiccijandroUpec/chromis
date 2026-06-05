@@ -93,17 +93,28 @@ public class JPanelAdminPremium extends JPanel implements JPanelView {
             {"Gesti\u00F3n Facturas", "sales_print.png", "Facturas electr\u00F3nicas", "uk.chromis.pos.invoice.forms.InvoiceListPanel"}
         }));
 
-        // SECCION 3: ADMINISTRACION
+        // SECCION 3: INVENTARIO
+        contentPanel.add(createSection("\uD83D\uDCE6 INVENTARIO", new String[][]{
+            {"Productos", "products.png", "Gestión de productos", "uk.chromis.pos.inventory.ProductsPanel"},
+            {"Categorías", "products.png", "Categorías de productos", "uk.chromis.pos.inventory.CategoriesPanel"},
+            {"Clientes", "user.png", "Gestión de clientes", "uk.chromis.pos.customers.CustomersPanel"},
+            {"Impuestos", "products.png", "Gestión de impuestos", "uk.chromis.pos.inventory.TaxesPanel"}
+        }));
+
+        // SECCION 4: ADMINISTRACION
         contentPanel.add(createSection("\uD83D\uDD27 ADMINISTRACI\u00D3N", new String[][]{
+            {"Usuarios", "user.png", "Gestión de usuarios", "uk.chromis.pos.panels.JPanelUsers"},
+            {"Roles", "user.png", "Permisos y roles", "uk.chromis.pos.panels.JPanelRoles"},
             {"Dashboard", "dashboard.png", "Panel central", "uk.chromis.pos.panels.JPanelDashboardCentral"},
             {"Admin Central", "config.png", "Admin con tabs", "uk.chromis.pos.panels.JPanelAdminCentral"},
             {"Empleados", "timer.png", "Control de presencia", "uk.chromis.pos.epm.JPanelEmployeePresence"},
             {"Impresoras", "printer.png", "Configurar impresoras", "uk.chromis.pos.panels.JPanelPrinter"}
         }));
 
-        // SECCION 4: SISTEMA
+        // SECCION 5: SISTEMA
         contentPanel.add(createSection("\u2699\uFE0F SISTEMA", new String[][]{
-            {"Respaldo y Restauraci\u00F3n", "backup.png", "Copias de seguridad", "uk.chromis.pos.forms.BackupRestoreDialog"}
+            {"Configuración General", "config.png", "Ajustes de Chromis", "uk.chromis.pos.config.JPanelConfiguration"},
+            {"Respaldo y Restauración", "backup.png", "Copias de seguridad", "uk.chromis.pos.forms.BackupRestoreDialog"}
         }));
 
         contentPanel.add(Box.createVerticalGlue());

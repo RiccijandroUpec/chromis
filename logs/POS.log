@@ -1,0 +1,584 @@
+Jun 04, 2026 8:53:48 PM com.mchange.v2.log.MLog 
+INFORMACIÓN: MLog clients using java 1.4+ standard logging.
+Jun 04, 2026 8:53:50 PM com.mchange.v2.c3p0.C3P0Registry 
+INFORMACIÓN: Initializing c3p0-0.9.5.5 [built 11-December-2019 22:18:33 -0800; debug? true; trace: 10]
+Jun 04, 2026 8:53:50 PM com.mchange.v2.c3p0.impl.AbstractPoolBackedDataSource 
+INFORMACIÓN: Initializing c3p0 pool... com.mchange.v2.c3p0.ComboPooledDataSource [ acquireIncrement -> 2, acquireRetryAttempts -> 30, acquireRetryDelay -> 1000, autoCommitOnClose -> false, automaticTestTable -> c3p0testing, breakAfterAcquireFailure -> false, checkoutTimeout -> 0, connectionCustomizerClassName -> null, connectionTesterClassName -> com.mchange.v2.c3p0.impl.DefaultConnectionTester, contextClassLoaderSource -> caller, dataSourceName -> 1hgeby9bi15h6gs9cwz47o|6e38921c, debugUnreturnedConnectionStackTraces -> false, description -> null, driverClass -> null, extensions -> {}, factoryClassLocation -> null, forceIgnoreUnresolvedTransactions -> false, forceSynchronousCheckins -> false, forceUseNamedDriverClass -> false, identityToken -> 1hgeby9bi15h6gs9cwz47o|6e38921c, idleConnectionTestPeriod -> 0, initialPoolSize -> 3, jdbcUrl -> jdbc:mysql://localhost:3306/chromisnewtest?zeroDateTimeBehavior=convert_To_NULL, maxAdministrativeTaskTime -> 0, maxConnectionAge -> 0, maxIdleTime -> 1, maxIdleTimeExcessConnections -> 0, maxPoolSize -> 10, maxStatements -> 180, maxStatementsPerConnection -> 0, minPoolSize -> 2, numHelperThreads -> 3, preferredTestQuery -> null, privilegeSpawnedThreads -> false, properties -> {password=******, user=******}, propertyCycle -> 0, statementCacheNumDeferredCloseThreads -> 0, testConnectionOnCheckin -> false, testConnectionOnCheckout -> false, unreturnedConnectionTimeout -> 0, userOverrides -> {}, usesTraditionalReflectiveProxies -> false ]
+num_connections: 0
+num_busy_connections: 0
+num_idle_connections: 0
+
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select userimage from systemblobs where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select userimage from systemblobs where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+Jun 04, 2026 8:53:51 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select uservalue from systemproperties where constant = ? 
+[DBVALIDATOR] user.dir=C:\xampp\htdocs\chromispos\ChromisPOS configPath=C:\xampp\htdocs\chromispos\ChromisPOS/chromisposconfig.properties
+[DBVALIDATOR] exists=true isDir=false
+[DBVALIDATOR] connected=true empty=false version=1.5.5 versionInt=253101 id=chromispos name=chromis pos rowCount=1 errMsg=''
+Jun 04, 2026 8:53:53 PM uk.chromis.data.loader.StaticSentence openExec
+INFORMACIÓN: Executing static SQL: select count(*) from payments where description is null or description =''
+num_connections: 2
+num_busy_connections: 1
+num_idle_connections: 1
+
+WARNING: The database is missing all or some of the required triggers.
+WARNING: The database is missing all or some of the required views.
+Jun 04, 2026 8:53:54 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select versionint from applications 
+Jun 04, 2026 8:53:55 PM uk.chromis.data.loader.StaticSentence openExec
+INFORMACIÓN: Executing static SQL: update terminals set appversion = '1.5.5 - 253101' where terminal_key = '4c5bece6-0bb0-476f-91a4-049b65054133' 
+Jun 04, 2026 8:53:55 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select active_cash from terminals where terminal_key = ? 
+Jun 04, 2026 8:53:55 PM uk.chromis.data.loader.StaticSentence openExec
+INFORMACIÓN: Executing static SQL: select host, hostsequence, datestart, dateend, nosales from closedcash where money = 'ec922767-ab92-40fc-8082-cdab5df18040' 
+Jun 04, 2026 8:53:55 PM uk.chromis.data.loader.StaticSentence openExec
+INFORMACIÓN: Executing static SQL: update terminals set active_cash = 'ec922767-ab92-40fc-8082-cdab5df18040' where terminal_key = '4c5bece6-0bb0-476f-91a4-049b65054133' 
+Jun 04, 2026 8:53:55 PM uk.chromis.data.loader.StaticSentence openExec
+INFORMACIÓN: Executing static SQL: select name from locations where id = 'MainStore'
+Jun 04, 2026 8:53:55 PM uk.chromis.data.loader.StaticSentence openExec
+INFORMACIÓN: Executing static SQL: update terminals set terminal_location = 'MainStore' where terminal_key = 'MainStore' 
+Jun 04, 2026 8:53:55 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select content from resources r join siteguid s on r.siteguid = s.guid  where name = ? and s.guid = r.siteguid 
+Jun 04, 2026 8:53:55 PM uk.chromis.data.loader.StaticSentence openExec
+INFORMACIÓN: Executing static SQL: select name from locations where id = 'MainStore'
+Jun 04, 2026 8:53:55 PM uk.chromis.data.loader.StaticSentence openExec
+INFORMACIÓN: Executing static SQL: select id, name, apppassword, card, role, image from people p join siteguid s on p.siteguid = s.guid where s.guid = p.siteguid and visible = true and iswaiter = false  order by name
+Jun 04, 2026 8:53:55 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select content from resources r join siteguid s on r.siteguid = s.guid  where name = ? and s.guid = r.siteguid 
+[2026-06-04 20:53:56] Iniciando módulo de facturación electrónica...
+[2026-06-04 20:53:56] AVISO: Archivo de configuración no encontrado: chromispos-invoice.properties
+[2026-06-04 20:53:56] AVISO: Certificado no configurado. Módulo en modo demostración
+? Módulo de facturación inicializado correctamente
+? Menú de facturación agregado
+? Integración completada exitosamente
+Jun 04, 2026 8:54:04 PM uk.chromis.data.loader.StaticSentence openExec
+INFORMACIÓN: Executing static SQL: update terminals set active_session = true, active_user = '00000000-0000-0000-0000-000000000001' where terminal_key = '4c5bece6-0bb0-476f-91a4-049b65054133' 
+Jun 04, 2026 8:54:04 PM uk.chromis.pos.forms.JPrincipalApp <init>
+INFORMACIÓN: Menu cargado desde Menu.Root.txt (local)
+Jun 04, 2026 8:54:04 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select p.id, greatest (p.agerestricted, c.agerestricted) AS agerestricted from products as p join categories as c on c.id = p.category where p.agerestricted > 0 or c.agerestricted > 0 
+Jun 04, 2026 8:54:04 PM uk.chromis.data.loader.StaticSentence openExec
+INFORMACIÓN: Executing static SQL: select guid from  siteguid 
+Jun 04, 2026 8:54:04 PM uk.chromis.data.loader.StaticSentence openExec
+INFORMACIÓN: Executing static SQL: select id, name, content, pickupid, loyaltycard, pickupbarcode, deliveryinfo from sharedtickets order by id
+Jun 04, 2026 8:54:04 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select content from resources r join siteguid s on r.siteguid = s.guid  where name = ? and s.guid = r.siteguid 
+Jun 04, 2026 8:54:04 PM uk.chromis.pos.sales.JTicketLines <init>
+ADVERTENCIA: Error de análisis. Archivo XML no válido.
+org.xml.sax.SAXParseException; lineNumber: 1; columnNumber: 1; Final de archivo prematuro.
+	at java.xml/com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.createSAXParseException(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.fatalError(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.impl.XMLErrorReporter.reportError(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.impl.XMLErrorReporter.reportError(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.impl.XMLScanner.reportFatalError(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl$PrologDriver.next(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanDocument(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.parse(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl$JAXPSAXParser.parse(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl.parse(Unknown Source)
+	at uk.chromis.pos.sales.JTicketLines.<init>(JTicketLines.java:98)
+	at uk.chromis.pos.sales.JPanelTicket.init(JPanelTicket.java:202)
+	at uk.chromis.pos.sales.JPanelTicketSales.init(JPanelTicketSales.java:58)
+	at uk.chromis.pos.forms.JRootApp.getBean(JRootApp.java:494)
+	at uk.chromis.pos.forms.JPrincipalApp.showTask(JPrincipalApp.java:497)
+	at uk.chromis.pos.forms.MenuPanelAction.actionPerformed(MenuPanelAction.java:62)
+	at uk.chromis.pos.forms.JPrincipalApp.activate(JPrincipalApp.java:413)
+	at uk.chromis.pos.forms.JRootApp.openAppView(JRootApp.java:622)
+	at uk.chromis.pos.forms.JRootApp.access$700(JRootApp.java:87)
+	at uk.chromis.pos.forms.JRootApp$AppUserAction.actionPerformed(JRootApp.java:593)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(Unknown Source)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(Unknown Source)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(Unknown Source)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(Unknown Source)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(Unknown Source)
+	at java.desktop/java.awt.Component.processMouseEvent(Unknown Source)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(Unknown Source)
+	at java.desktop/java.awt.Component.processEvent(Unknown Source)
+	at java.desktop/java.awt.Container.processEvent(Unknown Source)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.Component.dispatchEvent(Unknown Source)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Unknown Source)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Unknown Source)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Unknown Source)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.Component.dispatchEvent(Unknown Source)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.EventQueue$4.run(Unknown Source)
+	at java.desktop/java.awt.EventQueue$4.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(Unknown Source)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(Unknown Source)
+	at java.desktop/java.awt.EventQueue$5.run(Unknown Source)
+	at java.desktop/java.awt.EventQueue$5.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(Unknown Source)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.run(Unknown Source)
+
+Jun 04, 2026 8:54:04 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select content from resources r join siteguid s on r.siteguid = s.guid  where name = ? and s.guid = r.siteguid 
+Jun 04, 2026 8:54:04 PM uk.chromis.pos.sales.JPanelButtons <init>
+ADVERTENCIA: Error de análisis. Archivo XML no válido.
+org.xml.sax.SAXParseException; lineNumber: 1; columnNumber: 1; Final de archivo prematuro.
+	at java.xml/com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.createSAXParseException(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.fatalError(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.impl.XMLErrorReporter.reportError(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.impl.XMLErrorReporter.reportError(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.impl.XMLScanner.reportFatalError(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl$PrologDriver.next(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanDocument(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.parse(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl$JAXPSAXParser.parse(Unknown Source)
+	at java.xml/com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl.parse(Unknown Source)
+	at uk.chromis.pos.sales.JPanelButtons.<init>(JPanelButtons.java:101)
+	at uk.chromis.pos.sales.JPanelTicket.init(JPanelTicket.java:210)
+	at uk.chromis.pos.sales.JPanelTicketSales.init(JPanelTicketSales.java:58)
+	at uk.chromis.pos.forms.JRootApp.getBean(JRootApp.java:494)
+	at uk.chromis.pos.forms.JPrincipalApp.showTask(JPrincipalApp.java:497)
+	at uk.chromis.pos.forms.MenuPanelAction.actionPerformed(MenuPanelAction.java:62)
+	at uk.chromis.pos.forms.JPrincipalApp.activate(JPrincipalApp.java:413)
+	at uk.chromis.pos.forms.JRootApp.openAppView(JRootApp.java:622)
+	at uk.chromis.pos.forms.JRootApp.access$700(JRootApp.java:87)
+	at uk.chromis.pos.forms.JRootApp$AppUserAction.actionPerformed(JRootApp.java:593)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(Unknown Source)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(Unknown Source)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(Unknown Source)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(Unknown Source)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(Unknown Source)
+	at java.desktop/java.awt.Component.processMouseEvent(Unknown Source)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(Unknown Source)
+	at java.desktop/java.awt.Component.processEvent(Unknown Source)
+	at java.desktop/java.awt.Container.processEvent(Unknown Source)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.Component.dispatchEvent(Unknown Source)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Unknown Source)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Unknown Source)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Unknown Source)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.Component.dispatchEvent(Unknown Source)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.EventQueue$4.run(Unknown Source)
+	at java.desktop/java.awt.EventQueue$4.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(Unknown Source)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(Unknown Source)
+	at java.desktop/java.awt.EventQueue$5.run(Unknown Source)
+	at java.desktop/java.awt.EventQueue$5.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(Unknown Source)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.run(Unknown Source)
+
+Exception in thread "AWT-EventQueue-0" java.lang.IllegalArgumentException: Width (0) and height (0) cannot be <= 0
+	at java.desktop/java.awt.image.DirectColorModel.createCompatibleWritableRaster(Unknown Source)
+	at java.desktop/java.awt.image.BufferedImage.<init>(Unknown Source)
+	at uk.chromis.pos.util.ThumbNailBuilder.createThumbNail(ThumbNailBuilder.java:278)
+	at uk.chromis.pos.util.ThumbNailBuilder.<init>(ThumbNailBuilder.java:96)
+	at uk.chromis.pos.catalog.JCatalog.<init>(JCatalog.java:110)
+	at uk.chromis.pos.sales.JPanelTicketSales.getSouthComponent(JPanelTicketSales.java:79)
+	at uk.chromis.pos.sales.JPanelTicket.init(JPanelTicket.java:213)
+	at uk.chromis.pos.sales.JPanelTicketSales.init(JPanelTicketSales.java:58)
+	at uk.chromis.pos.forms.JRootApp.getBean(JRootApp.java:494)
+	at uk.chromis.pos.forms.JPrincipalApp.showTask(JPrincipalApp.java:497)
+	at uk.chromis.pos.forms.MenuPanelAction.actionPerformed(MenuPanelAction.java:62)
+	at uk.chromis.pos.forms.JPrincipalApp.activate(JPrincipalApp.java:413)
+	at uk.chromis.pos.forms.JRootApp.openAppView(JRootApp.java:622)
+	at uk.chromis.pos.forms.JRootApp.access$700(JRootApp.java:87)
+	at uk.chromis.pos.forms.JRootApp$AppUserAction.actionPerformed(JRootApp.java:593)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(Unknown Source)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(Unknown Source)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(Unknown Source)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(Unknown Source)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(Unknown Source)
+	at java.desktop/java.awt.Component.processMouseEvent(Unknown Source)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(Unknown Source)
+	at java.desktop/java.awt.Component.processEvent(Unknown Source)
+	at java.desktop/java.awt.Container.processEvent(Unknown Source)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.Component.dispatchEvent(Unknown Source)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Unknown Source)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Unknown Source)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Unknown Source)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.Component.dispatchEvent(Unknown Source)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.EventQueue$4.run(Unknown Source)
+	at java.desktop/java.awt.EventQueue$4.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(Unknown Source)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(Unknown Source)
+	at java.desktop/java.awt.EventQueue$5.run(Unknown Source)
+	at java.desktop/java.awt.EventQueue$5.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(Unknown Source)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.run(Unknown Source)
+Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException
+	at uk.chromis.pos.sales.JPanelTicket.refreshTicket(JPanelTicket.java:708)
+	at uk.chromis.pos.sales.JPanelTicket.setActiveTicket(JPanelTicket.java:661)
+	at uk.chromis.pos.sales.shared.JTicketsBagShared.newTicket(JTicketsBagShared.java:388)
+	at uk.chromis.pos.sales.shared.JTicketsBagShared.selectValidTicket(JTicketsBagShared.java:363)
+	at uk.chromis.pos.sales.shared.JTicketsBagShared.activate(JTicketsBagShared.java:193)
+	at uk.chromis.pos.sales.JPanelTicket.activate(JPanelTicket.java:751)
+	at uk.chromis.pos.sales.JPanelTicketSales.activate(JPanelTicketSales.java:102)
+	at uk.chromis.pos.forms.JPrincipalApp.showTask(JPrincipalApp.java:509)
+	at uk.chromis.pos.forms.JPrincipalApp.lambda$addItem$5(JPrincipalApp.java:249)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(Unknown Source)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(Unknown Source)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(Unknown Source)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(Unknown Source)
+	at java.desktop/javax.swing.AbstractButton.doClick(Unknown Source)
+	at java.desktop/javax.swing.plaf.basic.BasicMenuItemUI.doClick(Unknown Source)
+	at java.desktop/javax.swing.plaf.basic.BasicMenuItemUI$Handler.mouseReleased(Unknown Source)
+	at java.desktop/java.awt.Component.processMouseEvent(Unknown Source)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(Unknown Source)
+	at java.desktop/java.awt.Component.processEvent(Unknown Source)
+	at java.desktop/java.awt.Container.processEvent(Unknown Source)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.Component.dispatchEvent(Unknown Source)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Unknown Source)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Unknown Source)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Unknown Source)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.Component.dispatchEvent(Unknown Source)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.EventQueue$4.run(Unknown Source)
+	at java.desktop/java.awt.EventQueue$4.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(Unknown Source)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(Unknown Source)
+	at java.desktop/java.awt.EventQueue$5.run(Unknown Source)
+	at java.desktop/java.awt.EventQueue$5.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(Unknown Source)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.run(Unknown Source)
+Exception in thread "AWT-EventQueue-0" java.lang.IllegalArgumentException: model not a SpinnerDateModel
+	at java.desktop/javax.swing.JSpinner$DateEditor.<init>(Unknown Source)
+	at java.desktop/javax.swing.JSpinner$DateEditor.<init>(Unknown Source)
+	at uk.chromis.pos.forms.BackupRestoreDialog.initComponents(BackupRestoreDialog.java:105)
+	at uk.chromis.pos.forms.BackupRestoreDialog.<init>(BackupRestoreDialog.java:33)
+	at uk.chromis.pos.forms.JPrincipalApp.lambda$new$4(JPrincipalApp.java:218)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(Unknown Source)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(Unknown Source)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(Unknown Source)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(Unknown Source)
+	at java.desktop/javax.swing.AbstractButton.doClick(Unknown Source)
+	at java.desktop/javax.swing.plaf.basic.BasicMenuItemUI.doClick(Unknown Source)
+	at java.desktop/javax.swing.plaf.basic.BasicMenuItemUI$Handler.mouseReleased(Unknown Source)
+	at java.desktop/java.awt.Component.processMouseEvent(Unknown Source)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(Unknown Source)
+	at java.desktop/java.awt.Component.processEvent(Unknown Source)
+	at java.desktop/java.awt.Container.processEvent(Unknown Source)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.Component.dispatchEvent(Unknown Source)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Unknown Source)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Unknown Source)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Unknown Source)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.Component.dispatchEvent(Unknown Source)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(Unknown Source)
+	at java.desktop/java.awt.EventQueue$4.run(Unknown Source)
+	at java.desktop/java.awt.EventQueue$4.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(Unknown Source)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(Unknown Source)
+	at java.desktop/java.awt.EventQueue$5.run(Unknown Source)
+	at java.desktop/java.awt.EventQueue$5.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(Unknown Source)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.desktop/java.awt.EventDispatchThread.run(Unknown Source)
+Jun 04, 2026 8:54:55 PM uk.chromis.data.loader.StaticSentence openExec
+INFORMACIÓN: Executing static SQL: select id, name, apppassword, card, role, image from people p join siteguid s on p.siteguid = s.guid where s.guid = p.siteguid and visible = true and iswaiter = false  order by name
+Jun 04, 2026 9:18:59 PM uk.chromis.data.loader.StaticSentence openExec
+INFORMACIÓN: Executing static SQL: select id, name, apppassword, card, role, image from people p join siteguid s on p.siteguid = s.guid where s.guid = p.siteguid and visible = true and iswaiter = false  order by name
+Jun 04, 2026 9:20:54 PM uk.chromis.data.loader.StaticSentence openExec
+INFORMACIÓN: Executing static SQL: update terminals set active_session = false, active_user = null where terminal_key = '4c5bece6-0bb0-476f-91a4-049b65054133' 
+Jun 04, 2026 9:20:54 PM uk.chromis.data.loader.StaticSentence openExec
+INFORMACIÓN: Executing static SQL: select id, name, apppassword, card, role, image from people p join siteguid s on p.siteguid = s.guid where s.guid = p.siteguid and visible = true and iswaiter = false  order by name
+Jun 04, 2026 9:20:54 PM uk.chromis.data.loader.PreparedSentence openExec
+INFORMACIÓN: Executing prepared SQL: select content from resources r join siteguid s on r.siteguid = s.guid  where name = ? and s.guid = r.siteguid 

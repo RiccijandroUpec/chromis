@@ -64,6 +64,9 @@ import uk.chromis.pos.scripting.ScriptException;
 import uk.chromis.pos.scripting.ScriptFactory;
 import uk.chromis.pos.util.Hashcypher;
 import uk.chromis.pos.util.StringUtils;
+import java.awt.Frame;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 public class JPrincipalApp extends javax.swing.JPanel implements AppUserView {
 
@@ -123,31 +126,29 @@ public class JPrincipalApp extends javax.swing.JPanel implements AppUserView {
         m_jPanelContainer.add(new JPanel(), "<NULL>");
         showView("<NULL>");
 
+                // CHROMIS ECUADOR: Cargar Menu.Root.txt local SIEMPRE (menu completo con Administracion)
                 try {
-            // CHROMIS ECUADOR: Intentar cargar Menu.Root.txt local primero (menu completo)
-            String menuText = StringUtils.readResource("/uk/chromis/pos/templates/Menu.Root.txt");
-            if (menuText == null || menuText.trim().isEmpty()) {
-                throw new Exception("Menu.Root.txt is empty");
-            }
-            menuList.clear();
-            m_jPanelLeft.setViewportView(getScriptMenu(menuText));
-        } catch (Exception e) {
-            // Fallback: cargar desde base de datos
-            try {
-                String menuText = m_dlSystem.getResourceAsText("Menu.Root");
-                if (menuText == null || menuText.trim().isEmpty()) {
-                    throw new ScriptException("Menu.Root is empty in database");
-                }
-                m_jPanelLeft.setViewportView(getScriptMenu(menuText));
-            } catch (ScriptException ex) {
-                try {
+                    String menuText = StringUtils.readResource("/uk/chromis/pos/templates/Menu.Root.txt");
+                    if (menuText == null || menuText.trim().isEmpty()) {
+                        throw new Exception("Menu.Root.txt vacio o null");
+                    }
                     menuList.clear();
-                    m_jPanelLeft.setViewportView(getScriptMenu(StringUtils.readResource("/uk/chromis/pos/templates/Menu.Root.txt")));
-                } catch (IOException | ScriptException ex2) {
-                    logger.log(Level.SEVERE, "Cannot read default menu", ex2);
+                    m_jPanelLeft.setViewportView(getScriptMenu(menuText));
+                    logger.info("Menu cargado desde Menu.Root.txt (local)");
+                } catch (Exception eLocal) {
+                    logger.log(Level.WARNING, "No se pudo cargar Menu.Root.txt, intentando desde BD...", eLocal);
+                    // Fallback: cargar desde base de datos
+                    try {
+                        String menuTextBD = m_dlSystem.getResourceAsText("Menu.Root");
+                        if (menuTextBD == null || menuTextBD.trim().isEmpty()) {
+                            throw new ScriptException("Menu.Root is empty in database");
+                        }
+                        m_jPanelLeft.setViewportView(getScriptMenu(menuTextBD));
+                        logger.info("Menu cargado desde BD (fallback)");
+                    } catch (ScriptException exBD) {
+                        logger.log(Level.SEVERE, "Cannot read default menu from BD either", exBD);
+                    }
                 }
-            }
-        }
 
         for (int j = 0; j < menuList.size(); j++) {
             if (menuList.get(j).getMenuClass().equals("uk.chromis.pos.customers.CustomersPayment")) {

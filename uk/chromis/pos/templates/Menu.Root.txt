@@ -1,0 +1,10 @@
+// MAIN
+group = menu.addGroup("menu.main");
+        group.addPanel("sale.png", "menu.ticket", "uk.chromis.pos.sales.JPanelTicketSales");
+        group.addPanel("saleedit.png", "menu.ticketEdit", "uk.chromis.pos.sales.JPanelTicketEdits");
+        group.addPanel("customerpay.png", "menu.customerPayment", "uk.chromis.pos.customers.CustomersPayment");
+        group.addPanel("payments.png", "menu.payments", "uk.chromis.pos.panels.JPanelPayments");
+        group.addPanel("calculator.png", "menu.closeCash", "uk.chromis.pos.panels.JPanelCloseMoney");
+	group.addPanel("printer.png", "menu.printer", "uk.chromis.pos.panels.JPanelPrinter");
+    	group.addPanel("timer.png", "menu.checkInCheckOut", "uk.chromis.pos.epm.JPanelEmployeePresence");
+

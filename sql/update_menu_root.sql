@@ -1,0 +1,48 @@
+-- ============================================================
+-- ChromisPOS Ecuador - Actualizar Menu.Root en base de datos
+-- Incluye: Ventas + Administración + Configuración SRI
+-- ============================================================
+-- Ejecutar en la base de datos chromisnewtest (o la que uses)
+-- ============================================================
+
+-- Primero, eliminar el recurso Menu.Root existente (si existe)
+DELETE FROM resources WHERE name = 'Menu.Root';
+
+-- Insertar el nuevo Menu.Root con las secciones completas
+INSERT INTO resources (id, name, restype, content) VALUES (
+    'menu_root_001',
+    'Menu.Root',
+    0,
+    '// MAIN - Ventas
+group = menu.addGroup("menu.main");
+        group.addPanel("sale.png", "menu.ticket", "uk.chromis.pos.sales.JPanelTicketSales");
+        group.addPanel("saleedit.png", "menu.ticketEdit", "uk.chromis.pos.sales.JPanelTicketEdits");
+        group.addPanel("customerpay.png", "menu.customerPayment", "uk.chromis.pos.customers.CustomersPayment");
+        group.addPanel("payments.png", "menu.payments", "uk.chromis.pos.panels.JPanelPayments");
+        group.addPanel("calculator.png", "menu.closeCash", "uk.chromis.pos.panels.JPanelCloseMoney");
+        group.addPanel("printer.png", "menu.printer", "uk.chromis.pos.panels.JPanelPrinter");
+        group.addPanel("timer.png", "menu.checkInCheckOut", "uk.chromis.pos.epm.JPanelEmployeePresence");
+
+// MANTENIMIENTO E INVENTARIO
+group = menu.addGroup("menu.maintenance");
+        group.addPanel("products.png", "menu.products", "uk.chromis.pos.inventory.ProductsPanel");
+        group.addPanel("products.png", "menu.categories", "uk.chromis.pos.inventory.CategoriesPanel");
+        group.addPanel("products.png", "menu.taxcategories", "uk.chromis.pos.inventory.TaxCategoriesPanel");
+        group.addPanel("products.png", "menu.taxes", "uk.chromis.pos.inventory.TaxesPanel");
+        group.addPanel("user.png", "menu.customers", "uk.chromis.pos.customers.CustomersPanel");
+        group.addPanel("user.png", "menu.users", "uk.chromis.pos.panels.JPanelUsers");
+        group.addPanel("user.png", "menu.roles", "uk.chromis.pos.panels.JPanelRoles");
+        group.addPanel("resources.png", "menu.resources", "uk.chromis.pos.panels.JPanelResources");
+
+// ADMINISTRACION
+group = menu.addGroup("Administración");
+        group.addPanel("dashboard.png", "Dashboard Central", "uk.chromis.pos.panels.JPanelDashboardCentral");
+        group.addPanel("config.png", "Admin Premium", "uk.chromis.pos.panels.JPanelAdminPremium");
+        group.addPanel("config.png", "Admin Central", "uk.chromis.pos.panels.JPanelAdminCentral");
+
+// ECUADOR SRI
+group = menu.addGroup("Configuración ChromisEC");
+        group.addPanel("config.png", "Configuración SRI", "uk.chromis.pos.setup.JPanelConfigEcuador");
+        group.addPanel("sales_print.png", "Gestión Facturas SRI", "uk.chromis.pos.invoice.forms.InvoiceListPanel");
+        group.addPanel("config.png", "menu.configuration", "uk.chromis.pos.config.JPanelConfiguration");'
+);
