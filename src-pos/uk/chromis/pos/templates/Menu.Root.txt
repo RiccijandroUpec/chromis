@@ -38,6 +38,6 @@ group = menu.addGroup("Administración");
 
 // ECUADOR SRI
 group = menu.addGroup("Configuración ChromisEC");
-        group.addPanel("config.png", "Configuración SRI", "uk.chromis.pos.setup.JPanelConfigEcuador");
+        group.addPanel("config.png", "Configuración SRI", "uk.chromis.pos.invoice.forms.InvoiceConfigurationPanel");
         group.addPanel("sales_print.png", "Gestión Facturas SRI", "uk.chromis.pos.invoice.forms.InvoiceListPanel");
         group.addPanel("config.png", "menu.configuration", "uk.chromis.pos.config.JPanelConfiguration");

@@ -90,20 +90,14 @@ public class ChromisPOSInvoiceIntegration {
                 );
             });
             
-            // OPCIÓN 3: Configuración
-            JMenuItem itemConfiguracion = new JMenuItem("Configuración");
-            itemConfiguracion.setMnemonic('C');
-            itemConfiguracion.addActionListener(e -> {
-                showInvoicePanel(
-                    InvoiceModuleInitializer.getConfigurationPanel(),
-                    "Configuración de Facturación"
-                );
-            });
-            
+            // La configuración de facturación vive únicamente en la pestaña
+            // "Config SRI" de Admin Central (uk.chromis.pos.invoice.forms.InvoiceConfigurationPanel),
+            // para no tener dos pantallas distintas editando los mismos datos.
+
             // SEPARADOR
             menuFacturacion.addSeparator();
-            
-            // OPCIÓN 4: Ver Estado
+
+            // OPCIÓN 3: Ver Estado
             JMenuItem itemEstado = new JMenuItem("Estado del Módulo");
             itemEstado.addActionListener(e -> {
                 String estado = InvoiceModuleInitializer.getModuleStatus();
@@ -119,7 +113,6 @@ public class ChromisPOSInvoiceIntegration {
             menuFacturacion.add(itemNuevaFactura);
             menuFacturacion.add(itemListaFacturas);
             menuFacturacion.addSeparator();
-            menuFacturacion.add(itemConfiguracion);
             menuFacturacion.add(itemEstado);
             
             // Agregar menú a la barra

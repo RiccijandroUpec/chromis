@@ -1,5 +1,9 @@
 package uk.chromis.pos.invoice.forms;
 
+import uk.chromis.basic.BasicException;
+import uk.chromis.pos.forms.AppView;
+import uk.chromis.pos.forms.JPanelView;
+import uk.chromis.pos.invoice.InvoiceModule;
 import uk.chromis.pos.invoice.services.ElectronicInvoiceService;
 import uk.chromis.pos.invoice.utils.EcuadorValidators;
 import uk.chromis.pos.invoice.utils.CipherUtil;
@@ -15,10 +19,12 @@ import java.nio.file.Paths;
 import java.util.Properties;
 
 /**
- * Panel de configuración de facturación electrónica
+ * Panel de configuración de facturación electrónica (emisor, certificado, correo, ambiente).
+ * Única pantalla de configuración SRI/facturación: cifra contraseñas del certificado y del
+ * correo con CipherUtil antes de guardarlas en chromisposconfig.properties.
  */
-public class InvoiceConfigurationPanel extends JPanel {
-    
+public class InvoiceConfigurationPanel extends JPanel implements JPanelView {
+
     private ElectronicInvoiceService invoiceService;
     private Properties properties;
     private static final String CONFIG_FILE = "chromisposconfig.properties";
@@ -62,6 +68,34 @@ public class InvoiceConfigurationPanel extends JPanel {
         initComponents();
         layoutComponents();
         loadConfiguration();
+    }
+
+    /**
+     * Constructor requerido para instanciarse como pestaña de uk.chromis.pos.panels.JPanelAdminCentral
+     * (usa el módulo de facturación singleton en vez de recibir el servicio directamente).
+     */
+    public InvoiceConfigurationPanel(AppView appView) {
+        this(InvoiceModule.getInstance().getInvoiceService());
+    }
+
+    @Override
+    public JComponent getComponent() {
+        return this;
+    }
+
+    @Override
+    public String getTitle() {
+        return "⚙️ Configuración SRI";
+    }
+
+    @Override
+    public void activate() throws BasicException {
+        loadConfiguration();
+    }
+
+    @Override
+    public boolean deactivate() {
+        return true;
     }
     
     /**

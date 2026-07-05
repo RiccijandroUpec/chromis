@@ -166,7 +166,7 @@ public class JPanelDashboardCentral extends JPanel implements JPanelView {
         cardsPanel.add(Box.createHorizontalStrut(10));
         cardsPanel.add(createQuickCard("Admin Premium", "\uD83D\uDD27", new Color(155, 89, 182), "uk.chromis.pos.panels.JPanelAdminPremium"));
         cardsPanel.add(Box.createHorizontalStrut(10));
-        cardsPanel.add(createQuickCard("Config SRI", "\u2699\uFE0F", new Color(230, 126, 34), "uk.chromis.pos.setup.JPanelConfigEcuador"));
+        cardsPanel.add(createQuickCard("Config SRI", "\u2699\uFE0F", new Color(230, 126, 34), "uk.chromis.pos.invoice.forms.InvoiceConfigurationPanel"));
 
         section.add(cardsPanel);
         return section;
@@ -277,7 +277,7 @@ public class JPanelDashboardCentral extends JPanel implements JPanelView {
         itemsPanel.setBackground(Color.WHITE);
         itemsPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
 
-                addSettingItem(itemsPanel, "Configuraci\u00F3n SRI", "Configuraci\u00F3n fiscal Ecuador", "uk.chromis.pos.setup.JPanelConfigEcuador");
+                addSettingItem(itemsPanel, "Configuraci\u00F3n SRI", "Configuraci\u00F3n fiscal Ecuador", "uk.chromis.pos.invoice.forms.InvoiceConfigurationPanel");
         addSettingItem(itemsPanel, "Facturas SRI", "Gesti\u00F3n de facturas electr\u00F3nicas", "uk.chromis.pos.invoice.forms.InvoiceListPanel");
         addSettingItem(itemsPanel, "Impresoras", "Administrar conexiones de impresoras", "uk.chromis.pos.panels.JPanelPrinter");
         addSettingItem(itemsPanel, "Admin Premium", "Panel de administraci\u00F3n avanzado", "uk.chromis.pos.panels.JPanelAdminPremium");
@@ -348,7 +348,7 @@ public class JPanelDashboardCentral extends JPanel implements JPanelView {
         itemsPanel.setBackground(Color.WHITE);
         itemsPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
 
-                itemsPanel.add(createSettingItem("Configuraci\u00F3n SRI", "Datos del negocio y SRI", "uk.chromis.pos.setup.JPanelConfigEcuador"));
+                itemsPanel.add(createSettingItem("Configuraci\u00F3n SRI", "Datos del negocio y SRI", "uk.chromis.pos.invoice.forms.InvoiceConfigurationPanel"));
         itemsPanel.add(new JSeparator());
         itemsPanel.add(createSettingItem("Gesti\u00F3n Facturas SRI", "Facturas electr\u00F3nicas", "uk.chromis.pos.invoice.forms.InvoiceListPanel"));
         itemsPanel.add(new JSeparator());

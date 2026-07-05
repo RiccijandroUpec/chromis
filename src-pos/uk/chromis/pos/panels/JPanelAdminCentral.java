@@ -32,11 +32,13 @@ public class JPanelAdminCentral extends JPanel implements JPanelView {
     private void initTabs() {
         // Each tab: {titleKey or label, iconName, panelClass}
         String[][] tabsDef = {
-            {"Config SRI", "config.png", "uk.chromis.pos.setup.JPanelConfigEcuador"},
+            {"Config SRI", "config.png", "uk.chromis.pos.invoice.forms.InvoiceConfigurationPanel"},
             {"Facturas SRI", "sales_print.png", "uk.chromis.pos.invoice.forms.InvoiceListPanel"},
             {"Admin Premium", "dashboard.png", "uk.chromis.pos.panels.JPanelAdminPremium"},
             {"Dashboard", "dashboard.png", "uk.chromis.pos.panels.JPanelDashboardCentral"},
             {"Productos", "products.png", "uk.chromis.pos.inventory.ProductsPanel"},
+            {"Categorias", "products.png", "uk.chromis.pos.inventory.CategoriesPanel"},
+            {"Impuestos", "products.png", "uk.chromis.pos.inventory.TaxesPanel"},
             {"Usuarios", "user.png", "uk.chromis.pos.panels.JPanelUsers"},
             {"Configuracion", "config.png", "uk.chromis.pos.config.JPanelConfiguration"},
             {"Impresoras", "printer.png", "uk.chromis.pos.panels.JPanelPrinter"},

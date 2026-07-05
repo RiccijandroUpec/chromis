@@ -89,7 +89,7 @@ public class JPanelAdminPremium extends JPanel implements JPanelView {
 
         // SECCION 2: FACTURACION SRI
         contentPanel.add(createSection("\uD83D\uDCCB FACTURACI\u00D3N SRI", new String[][]{
-            {"Configuraci\u00F3n SRI", "config.png", "Configurar datos SRI", "uk.chromis.pos.setup.JPanelConfigEcuador"},
+            {"Configuraci\u00F3n SRI", "config.png", "Configurar datos SRI", "uk.chromis.pos.invoice.forms.InvoiceConfigurationPanel"},
             {"Gesti\u00F3n Facturas", "sales_print.png", "Facturas electr\u00F3nicas", "uk.chromis.pos.invoice.forms.InvoiceListPanel"}
         }));
 
