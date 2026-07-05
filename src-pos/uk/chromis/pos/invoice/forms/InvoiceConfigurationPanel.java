@@ -552,12 +552,16 @@ public class InvoiceConfigurationPanel extends JPanel {
             
             // Reinicializar el servicio de facturación del POS
             String certPath = properties.getProperty("invoice.certificate.path", "");
-            String certPass = properties.getProperty("invoice.certificate.password", "");
-            if (!certPass.isEmpty()) {
-                certPass = CipherUtil.decrypt(certPass);
-            }
+            String encryptedCertPass = properties.getProperty("invoice.certificate.password", "");
+            char[] certPass = encryptedCertPass.isEmpty()
+                    ? new char[0]
+                    : CipherUtil.decryptToCharArray(encryptedCertPass);
             boolean isProd = "2".equals(properties.getProperty("invoice.environment", "1"));
-            invoiceService.initialize(certPath, certPass, isProd);
+            try {
+                invoiceService.initialize(certPath, certPass, isProd);
+            } finally {
+                java.util.Arrays.fill(certPass, '\0');
+            }
             
             JOptionPane.showMessageDialog(this, "Configuración guardada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             

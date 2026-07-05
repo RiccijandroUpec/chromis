@@ -26,6 +26,7 @@ public class RideGeneratorService {
         if (!dir.exists()) {
             dir.mkdirs();
         }
+        uk.chromis.pos.invoice.utils.FileSecurity.restrictToOwner(dir);
     }
     
     /**
@@ -54,8 +55,10 @@ public class RideGeneratorService {
                     environment = "PRODUCCIÓN";
                 }
             }
-        } catch (Exception e) {}
-        
+        } catch (Exception e) {
+            System.err.println("Advertencia: no se pudo leer invoice.environment, asumiendo ambiente de pruebas: " + e.getMessage());
+        }
+
         try (PDDocument document = new PDDocument()) {
             PDPage page = new PDPage(PDRectangle.LETTER);
             document.addPage(page);
@@ -323,7 +326,8 @@ public class RideGeneratorService {
             
             document.save(file);
         }
-        
+        uk.chromis.pos.invoice.utils.FileSecurity.restrictToOwner(file);
+
         return file.getAbsolutePath();
     }
     

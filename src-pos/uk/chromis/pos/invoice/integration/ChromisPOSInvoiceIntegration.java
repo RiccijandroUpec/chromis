@@ -342,9 +342,10 @@ public class ChromisPOSInvoiceIntegration {
                     // 2. Inicializar y procesar a través del servicio
                     uk.chromis.pos.invoice.services.ElectronicInvoiceService service = new uk.chromis.pos.invoice.services.ElectronicInvoiceService();
                     String certPath = props.getProperty("invoice.certificate.path", "");
-                    String certPass = props.getProperty("invoice.certificate.password", "");
+                    char[] certPass = uk.chromis.pos.invoice.utils.CipherUtil.decryptToCharArray(
+                            props.getProperty("invoice.certificate.password", ""));
                     boolean isProd = "2".equals(props.getProperty("invoice.environment", "1"));
-                    
+
                     service.initialize(certPath, certPass, isProd);
                     
                     // Cargar configuración de correo específica del usuario que realiza la venta

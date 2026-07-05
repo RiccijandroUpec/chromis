@@ -79,7 +79,8 @@ public class InvoiceListPanel extends JPanel implements JPanelView, BeanFactoryA
             // Inicializar servicio
             invoiceService = new ElectronicInvoiceService();
             String certPath = props.getProperty("invoice.certificate.path", "");
-            String certPass = props.getProperty("invoice.certificate.password", "");
+            char[] certPass = uk.chromis.pos.invoice.utils.CipherUtil.decryptToCharArray(
+                    props.getProperty("invoice.certificate.password", ""));
             boolean production = "2".equals(props.getProperty("invoice.environment", "1"));
             invoiceService.initialize(certPath, certPass, production);
             

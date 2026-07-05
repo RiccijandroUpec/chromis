@@ -28,7 +28,7 @@ public class ElectronicInvoiceService {
     /**
      * Inicializa el servicio con los parámetros necesarios
      */
-    public void initialize(String certificatePath, String certificatePassword, boolean production) {
+    public void initialize(String certificatePath, char[] certificatePassword, boolean production) {
         this.signatureService = new DigitalSignatureService(certificatePath, certificatePassword);
         this.sriService = new SRIIntegrationService(production);
     }
@@ -64,6 +64,7 @@ public class ElectronicInvoiceService {
                 try (FileWriter fw = new FileWriter(xmlFile)) {
                     fw.write(invoice.getSignedXmlContent() != null ? invoice.getSignedXmlContent() : invoice.getXmlContent());
                 }
+                uk.chromis.pos.invoice.utils.FileSecurity.restrictToOwner(xmlFile);
                 
                 File rideFile = new File(ridePath);
                 

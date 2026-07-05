@@ -2,8 +2,7 @@ package uk.chromis.pos.inventory;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.*;
-import java.util.UUID;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -11,6 +10,8 @@ import javax.swing.table.*;
 import uk.chromis.basic.BasicException;
 import uk.chromis.pos.forms.AppView;
 import uk.chromis.pos.forms.JPanelView;
+import uk.chromis.pos.inventory.dao.CategoryDAO;
+import uk.chromis.pos.inventory.ui.CrudUiUtils;
 
 /**
  * Panel de Gestión de Categorías - CRUD completo.
@@ -19,6 +20,7 @@ public class CategoriesPanel extends JPanel implements JPanelView {
 
     private static final Logger logger = Logger.getLogger(CategoriesPanel.class.getName());
     private final AppView appView;
+    private final CategoryDAO dao;
 
     private JTable table;
     private DefaultTableModel model;
@@ -28,6 +30,7 @@ public class CategoriesPanel extends JPanel implements JPanelView {
 
     public CategoriesPanel(AppView appView) {
         this.appView = appView;
+        this.dao = new CategoryDAO(appView);
         setLayout(new BorderLayout());
         buildUI();
     }
@@ -51,10 +54,10 @@ public class CategoriesPanel extends JPanel implements JPanelView {
         searchField.addKeyListener(new KeyAdapter() {
             @Override public void keyReleased(KeyEvent e) { loadData(searchField.getText().trim()); }
         });
-        JButton btnNuevo    = makeBtn("➕ Nueva",    new Color(46, 160, 67));
-        JButton btnEditar   = makeBtn("✏️ Editar",   new Color(41, 128, 185));
-        JButton btnEliminar = makeBtn("🗑️ Eliminar", new Color(203, 36, 49));
-        JButton btnRefresh  = makeBtn("🔄 Refrescar", new Color(100, 100, 110));
+        JButton btnNuevo    = CrudUiUtils.makeBtn("➕ Nueva",    new Color(46, 160, 67));
+        JButton btnEditar   = CrudUiUtils.makeBtn("✏️ Editar",   new Color(41, 128, 185));
+        JButton btnEliminar = CrudUiUtils.makeBtn("🗑️ Eliminar", new Color(203, 36, 49));
+        JButton btnRefresh  = CrudUiUtils.makeBtn("🔄 Refrescar", new Color(100, 100, 110));
         toolbar.add(new JLabel("Buscar: "));
         toolbar.add(searchField);
         toolbar.add(btnNuevo); toolbar.add(btnEditar);
@@ -94,31 +97,16 @@ public class CategoriesPanel extends JPanel implements JPanelView {
         btnRefresh.addActionListener(e -> loadData(""));
     }
 
-    private JButton makeBtn(String text, Color bg) {
-        JButton b = new JButton(text);
-        b.setBackground(bg); b.setForeground(Color.WHITE);
-        b.setFocusPainted(false);
-        b.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 12));
-        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        return b;
-    }
-
     @Override
     public void activate() throws BasicException { loadData(""); }
 
     private void loadData(String filter) {
         model.setRowCount(0);
-        String sql = "SELECT c.id, c.name, p.name FROM categories c "
-                   + "LEFT JOIN categories p ON c.parentid = p.id "
-                   + "WHERE c.name LIKE ? ORDER BY c.name LIMIT 300";
-        try (Connection conn = appView.getSession().getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, "%" + filter + "%");
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                model.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getString(3)});
+        try {
+            for (Object[] row : dao.search(filter)) {
+                model.addRow(row);
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             logger.log(Level.WARNING, "Error cargando categorías", ex);
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
         }
@@ -146,50 +134,30 @@ public class CategoriesPanel extends JPanel implements JPanelView {
 
         String selParent = fParent.getSelectedItem() != null ? ((String[]) fParent.getSelectedItem())[0] : null;
         if (selParent != null && selParent.isEmpty()) selParent = null;
-        try (Connection conn = appView.getSession().getConnection()) {
+        try {
             if (editRow == null) {
-                PreparedStatement ps = conn.prepareStatement(
-                    "INSERT INTO categories (id, name, parentid) VALUES (?,?,?)");
-                ps.setString(1, UUID.randomUUID().toString());
-                ps.setString(2, fName.getText().trim());
-                ps.setString(3, selParent);
-                ps.executeUpdate();
+                dao.insert(fName.getText().trim(), selParent);
             } else {
-                PreparedStatement ps = conn.prepareStatement(
-                    "UPDATE categories SET name=?, parentid=? WHERE id=?");
-                ps.setString(1, fName.getText().trim());
-                ps.setString(2, selParent);
-                ps.setString(3, id);
-                ps.executeUpdate();
+                dao.update(id, fName.getText().trim(), selParent);
             }
             loadData(searchField.getText().trim());
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error al guardar:\n" + ex.getMessage());
         }
     }
 
-    @SuppressWarnings("unchecked")
     private JComboBox<String[]> buildParentCombo(String selectedId, String excludeId) {
-        JComboBox<String[]> combo = new JComboBox<>();
-        combo.setRenderer(new DefaultListCellRenderer() {
-            @Override public Component getListCellRendererComponent(JList<?> l, Object v, int i, boolean s, boolean f) {
-                super.getListCellRendererComponent(l, v, i, s, f);
-                if (v instanceof String[]) setText(((String[]) v)[1]);
-                return this;
-            }
-        });
+        JComboBox<String[]> combo = CrudUiUtils.newIdLabelCombo();
         combo.addItem(new String[]{"", "(Sin categoría padre)"});
-        try (Connection conn = appView.getSession().getConnection();
-             PreparedStatement ps = conn.prepareStatement(
-                     "SELECT id, name FROM categories WHERE id != ? ORDER BY name")) {
-            ps.setString(1, excludeId != null ? excludeId : "");
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                String[] item = {rs.getString(1), rs.getString(2)};
+        try {
+            List<String[]> categories = dao.listParentCandidates(excludeId);
+            for (String[] item : categories) {
                 combo.addItem(item);
-                if (rs.getString(1).equals(selectedId)) combo.setSelectedItem(item);
+                if (item[0].equals(selectedId)) combo.setSelectedItem(item);
             }
-        } catch (SQLException ex) { /* ignore */ }
+        } catch (Exception ex) {
+            logger.log(Level.WARNING, "Error cargando categorías padre para el combo", ex);
+        }
         return combo;
     }
 
@@ -202,12 +170,10 @@ public class CategoriesPanel extends JPanel implements JPanelView {
         int confirm = JOptionPane.showConfirmDialog(this,
                 "¿Eliminar la categoría \"" + name + "\"?", "Confirmar", JOptionPane.YES_NO_OPTION);
         if (confirm != JOptionPane.YES_OPTION) return;
-        try (Connection conn = appView.getSession().getConnection();
-             PreparedStatement ps = conn.prepareStatement("DELETE FROM categories WHERE id=?")) {
-            ps.setString(1, id);
-            ps.executeUpdate();
+        try {
+            dao.delete(id);
             loadData(searchField.getText().trim());
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error al eliminar:\n" + ex.getMessage());
         }
     }

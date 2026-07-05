@@ -92,7 +92,9 @@ public class InvoiceXMLGenerator {
                     environment = "1";
                 }
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            System.err.println("Advertencia: no se pudo leer invoice.environment, usando ambiente de pruebas por defecto: " + e.getMessage());
+        }
 
         String accessKey = AccessKeyGenerator.generateAccessKey(
             date,
@@ -101,11 +103,21 @@ public class InvoiceXMLGenerator {
             environment, // 1 Pruebas, 2 Producción
             "001001", // Estab + PtoEmi
             invoice.getInvoiceNumber(),
-            "12345678", // Código Numérico
+            generateRandomNumericCode(), // Código Numérico aleatorio (exigido por el SRI)
             "1" // Tipo Emisión (1 Normal)
         );
         
         invoice.setAccessKey(accessKey);
+    }
+
+    /**
+     * Genera el código numérico de 8 dígitos exigido por el SRI dentro de la clave de acceso.
+     * Debe ser aleatorio para no reducir la entropía de la clave de acceso pública del comprobante.
+     */
+    private String generateRandomNumericCode() {
+        java.security.SecureRandom random = new java.security.SecureRandom();
+        int value = random.nextInt(100_000_000); // 0 a 99999999
+        return String.format("%08d", value);
     }
     
     /**
@@ -128,8 +140,10 @@ public class InvoiceXMLGenerator {
                         ambiente = "1";
                     }
                 }
-            } catch (Exception e) {}
-            
+            } catch (Exception e) {
+                System.err.println("Advertencia: no se pudo leer invoice.environment, usando ambiente de pruebas por defecto: " + e.getMessage());
+            }
+
             addElement(doc, element, "ambiente", ambiente); // 1 = Pruebas, 2 = Producción
             addElement(doc, element, "tipoEmision", "1"); // 1 = Normal
             addElement(doc, element, "razonSocial", invoice.getIssuer().getBusinessName());

@@ -34,12 +34,15 @@ import org.w3c.dom.NodeList;
 public class DigitalSignatureService {
     
     private String certificatePath;
-    private String certificatePassword;
+    private char[] certificatePassword;
     private KeyStore keyStore;
-    
-    public DigitalSignatureService(String certificatePath, String certificatePassword) {
+
+    public DigitalSignatureService(String certificatePath, char[] certificatePassword) {
         this.certificatePath = certificatePath;
-        this.certificatePassword = certificatePassword;
+        // Copia defensiva: el llamador puede borrar su propio arreglo después de este constructor.
+        this.certificatePassword = certificatePassword != null
+                ? Arrays.copyOf(certificatePassword, certificatePassword.length)
+                : null;
         this.keyStore = null;
     }
     
@@ -58,7 +61,7 @@ public class DigitalSignatureService {
         
         try (FileInputStream fis = new FileInputStream(certFile)) {
             keyStore = KeyStore.getInstance("PKCS12");
-            keyStore.load(fis, certificatePassword != null ? certificatePassword.toCharArray() : new char[0]);
+            keyStore.load(fis, certificatePassword != null ? certificatePassword : new char[0]);
         }
     }
     
@@ -76,8 +79,8 @@ public class DigitalSignatureService {
         
         // Obtener alias y clave privada
         String alias = keyStore.aliases().nextElement();
-        PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, 
-            certificatePassword != null ? certificatePassword.toCharArray() : new char[0]);
+        PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias,
+            certificatePassword != null ? certificatePassword : new char[0]);
         
         if (privateKey == null) {
             throw new IllegalStateException("Clave privada no encontrada en el certificado.");
@@ -301,15 +304,27 @@ public class DigitalSignatureService {
         this.certificatePath = certificatePath;
     }
     
-    public String getCertificatePassword() {
+    public char[] getCertificatePassword() {
         return certificatePassword;
     }
-    
-    public void setCertificatePassword(String certificatePassword) {
-        this.certificatePassword = certificatePassword;
+
+    public void setCertificatePassword(char[] certificatePassword) {
+        this.certificatePassword = certificatePassword != null
+                ? Arrays.copyOf(certificatePassword, certificatePassword.length)
+                : null;
     }
-    
+
     public boolean isCertificateLoaded() {
         return keyStore != null;
+    }
+
+    /**
+     * Borra la contraseña del certificado de memoria. Llamar cuando el servicio ya no
+     * necesite firmar más comprobantes (p. ej. al cerrar sesión o reinicializar).
+     */
+    public void clearCertificatePassword() {
+        if (certificatePassword != null) {
+            Arrays.fill(certificatePassword, '\0');
+        }
     }
 }

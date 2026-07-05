@@ -1,9 +1,7 @@
 package uk.chromis.pos.inventory;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.sql.*;
-import java.util.UUID;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -11,6 +9,8 @@ import javax.swing.table.*;
 import uk.chromis.basic.BasicException;
 import uk.chromis.pos.forms.AppView;
 import uk.chromis.pos.forms.JPanelView;
+import uk.chromis.pos.inventory.dao.TaxDAO;
+import uk.chromis.pos.inventory.ui.CrudUiUtils;
 
 /**
  * Panel de Gestión de Impuestos - CRUD completo.
@@ -19,6 +19,7 @@ public class TaxesPanel extends JPanel implements JPanelView {
 
     private static final Logger logger = Logger.getLogger(TaxesPanel.class.getName());
     private final AppView appView;
+    private final TaxDAO dao;
 
     private JTable table;
     private DefaultTableModel model;
@@ -27,6 +28,7 @@ public class TaxesPanel extends JPanel implements JPanelView {
 
     public TaxesPanel(AppView appView) {
         this.appView = appView;
+        this.dao = new TaxDAO(appView);
         setLayout(new BorderLayout());
         buildUI();
     }
@@ -44,10 +46,10 @@ public class TaxesPanel extends JPanel implements JPanelView {
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 6));
         toolbar.setBackground(new Color(250, 247, 242));
         toolbar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 210, 200)));
-        JButton btnNuevo    = makeBtn("➕ Nuevo",    new Color(46, 160, 67));
-        JButton btnEditar   = makeBtn("✏️ Editar",   new Color(41, 128, 185));
-        JButton btnEliminar = makeBtn("🗑️ Eliminar", new Color(203, 36, 49));
-        JButton btnRefresh  = makeBtn("🔄 Refrescar", new Color(100, 100, 110));
+        JButton btnNuevo    = CrudUiUtils.makeBtn("➕ Nuevo",    new Color(46, 160, 67));
+        JButton btnEditar   = CrudUiUtils.makeBtn("✏️ Editar",   new Color(41, 128, 185));
+        JButton btnEliminar = CrudUiUtils.makeBtn("🗑️ Eliminar", new Color(203, 36, 49));
+        JButton btnRefresh  = CrudUiUtils.makeBtn("🔄 Refrescar", new Color(100, 100, 110));
         toolbar.add(btnNuevo); toolbar.add(btnEditar);
         toolbar.add(btnEliminar); toolbar.add(btnRefresh);
 
@@ -83,32 +85,16 @@ public class TaxesPanel extends JPanel implements JPanelView {
         btnRefresh.addActionListener(e -> loadData());
     }
 
-    private JButton makeBtn(String text, Color bg) {
-        JButton b = new JButton(text);
-        b.setBackground(bg); b.setForeground(Color.WHITE);
-        b.setFocusPainted(false);
-        b.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 12));
-        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        return b;
-    }
-
     @Override
     public void activate() throws BasicException { loadData(); }
 
     private void loadData() {
         model.setRowCount(0);
-        String sql = "SELECT id, name, rate FROM taxes ORDER BY name";
-        try (Connection conn = appView.getSession().getConnection();
-             Statement st = conn.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
-            while (rs.next()) {
-                model.addRow(new Object[]{
-                    rs.getString(1), rs.getString(2),
-                    String.format("%.2f%%", rs.getDouble(3) * 100),
-                    ""
-                });
+        try {
+            for (Object[] row : dao.list()) {
+                model.addRow(row);
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             logger.log(Level.WARNING, "Error cargando impuestos", ex);
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
         }
@@ -137,23 +123,12 @@ public class TaxesPanel extends JPanel implements JPanelView {
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (res != JOptionPane.OK_OPTION) return;
 
-        String selCat = fCat.getSelectedItem() != null ? ((String[]) fCat.getSelectedItem())[0] : null;
-        try (Connection conn = appView.getSession().getConnection()) {
+        try {
             double rateVal = Double.parseDouble(fRate.getText().trim()) / 100.0;
             if (editRow == null) {
-                PreparedStatement ps = conn.prepareStatement(
-                    "INSERT INTO taxes (id, name, rate) VALUES (?,?,?)");
-                ps.setString(1, UUID.randomUUID().toString());
-                ps.setString(2, fName.getText().trim());
-                ps.setDouble(3, rateVal);
-                ps.executeUpdate();
+                dao.insert(fName.getText().trim(), rateVal);
             } else {
-                PreparedStatement ps = conn.prepareStatement(
-                    "UPDATE taxes SET name=?, rate=? WHERE id=?");
-                ps.setString(1, fName.getText().trim());
-                ps.setDouble(2, rateVal);
-                ps.setString(3, id);
-                ps.executeUpdate();
+                dao.update(id, fName.getText().trim(), rateVal);
             }
             loadData();
         } catch (Exception ex) {
@@ -161,25 +136,17 @@ public class TaxesPanel extends JPanel implements JPanelView {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private JComboBox<String[]> buildTaxCatCombo(String selectedId) {
-        JComboBox<String[]> combo = new JComboBox<>();
-        combo.setRenderer(new DefaultListCellRenderer() {
-            @Override public Component getListCellRendererComponent(JList<?> l, Object v, int i, boolean s, boolean f) {
-                super.getListCellRendererComponent(l, v, i, s, f);
-                if (v instanceof String[]) setText(((String[]) v)[1]);
-                return this;
-            }
-        });
-        try (Connection conn = appView.getSession().getConnection();
-             Statement st = conn.createStatement();
-             ResultSet rs = st.executeQuery("SELECT id, name FROM taxcategories ORDER BY name")) {
-            while (rs.next()) {
-                String[] item = {rs.getString(1), rs.getString(2)};
+        JComboBox<String[]> combo = CrudUiUtils.newIdLabelCombo();
+        try {
+            List<String[]> categories = dao.listTaxCategories();
+            for (String[] item : categories) {
                 combo.addItem(item);
-                if (rs.getString(1).equals(selectedId)) combo.setSelectedItem(item);
+                if (item[0].equals(selectedId)) combo.setSelectedItem(item);
             }
-        } catch (SQLException ex) { /* ignore */ }
+        } catch (Exception ex) {
+            logger.log(Level.WARNING, "Error cargando categorías de impuesto para el combo", ex);
+        }
         return combo;
     }
 
@@ -192,12 +159,10 @@ public class TaxesPanel extends JPanel implements JPanelView {
         int confirm = JOptionPane.showConfirmDialog(this,
                 "¿Eliminar el impuesto \"" + name + "\"?", "Confirmar", JOptionPane.YES_NO_OPTION);
         if (confirm != JOptionPane.YES_OPTION) return;
-        try (Connection conn = appView.getSession().getConnection();
-             PreparedStatement ps = conn.prepareStatement("DELETE FROM taxes WHERE id=?")) {
-            ps.setString(1, id);
-            ps.executeUpdate();
+        try {
+            dao.delete(id);
             loadData();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "No se puede eliminar (en uso):\n" + ex.getMessage());
         }
     }

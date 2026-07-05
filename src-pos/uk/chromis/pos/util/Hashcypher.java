@@ -25,15 +25,23 @@
 
 package uk.chromis.pos.util;
 
-import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.KeySpec;
+import java.util.Base64;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 
 /**
  *
  *
  */
 public class Hashcypher {
+
+    private static final String PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA256";
+    private static final int PBKDF2_ITERATIONS = 120_000;
+    private static final int PBKDF2_KEY_LENGTH_BITS = 256;
+    private static final int SALT_LENGTH_BYTES = 16;
 
     /**
      * Creates a new instance of Hashcypher
@@ -50,9 +58,13 @@ public class Hashcypher {
     public static boolean authenticate(String sPassword, String sHashPassword) {
         if (sHashPassword == null || sHashPassword.equals("") || sHashPassword.startsWith("empty:")) {
             return sPassword == null || sPassword.equals("");
+        } else if (sHashPassword.startsWith("pbkdf2:")) {
+            return authenticatePbkdf2(sPassword, sHashPassword);
         } else if (sHashPassword.startsWith("sha1:")) {
-            return sHashPassword.equals(hashString(sPassword));
+            // Compatibilidad retroactiva con hashes existentes: solo verificación, nunca se generan nuevos.
+            return sHashPassword.equals(legacySha1(sPassword));
         } else if (sHashPassword.startsWith("plain:")) {
+            // Compatibilidad retroactiva con hashes existentes: solo verificación, nunca se generan nuevos.
             return sHashPassword.equals("plain:" + sPassword);
         } else {
             return sHashPassword.equals(sPassword);
@@ -60,7 +72,7 @@ public class Hashcypher {
     }
 
     /**
-     *
+     * Genera el hash de una contraseña usando PBKDF2WithHmacSHA256 con sal aleatoria por contraseña.
      * @param sPassword
      * @return
      */
@@ -68,17 +80,59 @@ public class Hashcypher {
 
         if (sPassword == null || sPassword.equals("")) {
             return "empty:";
-        } else {
-            try {
-                MessageDigest md = MessageDigest.getInstance("SHA-1");
-                md.update(sPassword.getBytes("UTF-8"));
-                byte[] res = md.digest();
-                return "sha1:" + StringUtils.byte2hex(res);
-            } catch (NoSuchAlgorithmException e) {
-                return "plain:" + sPassword;
-            } catch (UnsupportedEncodingException e) {
-                return "plain:" + sPassword;
+        }
+
+        byte[] salt = new byte[SALT_LENGTH_BYTES];
+        new SecureRandom().nextBytes(salt);
+        byte[] hash = pbkdf2(sPassword, salt);
+
+        return "pbkdf2:" + PBKDF2_ITERATIONS + ":"
+                + Base64.getEncoder().encodeToString(salt) + ":"
+                + Base64.getEncoder().encodeToString(hash);
+    }
+
+    private static boolean authenticatePbkdf2(String sPassword, String sHashPassword) {
+        try {
+            String[] parts = sHashPassword.split(":");
+            if (parts.length != 4) {
+                return false;
             }
+            int iterations = Integer.parseInt(parts[1]);
+            byte[] salt = Base64.getDecoder().decode(parts[2]);
+            byte[] expectedHash = Base64.getDecoder().decode(parts[3]);
+
+            byte[] actualHash = pbkdf2(sPassword == null ? "" : sPassword, salt, iterations, expectedHash.length * 8);
+            return MessageDigest.isEqual(expectedHash, actualHash);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static byte[] pbkdf2(String sPassword, byte[] salt) {
+        return pbkdf2(sPassword, salt, PBKDF2_ITERATIONS, PBKDF2_KEY_LENGTH_BITS);
+    }
+
+    private static byte[] pbkdf2(String sPassword, byte[] salt, int iterations, int keyLengthBits) {
+        try {
+            KeySpec spec = new PBEKeySpec(sPassword.toCharArray(), salt, iterations, keyLengthBits);
+            SecretKeyFactory factory = SecretKeyFactory.getInstance(PBKDF2_ALGORITHM);
+            return factory.generateSecret(spec).getEncoded();
+        } catch (Exception e) {
+            // PBKDF2WithHmacSHA256 está garantizado en toda JVM estándar (Java 8+).
+            throw new IllegalStateException("No se pudo calcular PBKDF2", e);
+        }
+    }
+
+    /**
+     * Mantiene la verificación de hashes SHA-1 heredados (formato "sha1:" previo a la migración a PBKDF2).
+     */
+    private static String legacySha1(String sPassword) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            md.update(sPassword.getBytes("UTF-8"));
+            return "sha1:" + StringUtils.byte2hex(md.digest());
+        } catch (Exception e) {
+            throw new IllegalStateException("No se pudo calcular SHA-1 heredado", e);
         }
     }
 

@@ -45,13 +45,16 @@ public class InvoiceModule {
      * @return true si inicializa exitosamente
      */
     public boolean initialize(String certificatePath, String password, boolean testMode) {
+        char[] passwordChars = password != null ? password.toCharArray() : new char[0];
         try {
-            invoiceService.initialize(certificatePath, password, testMode);
+            invoiceService.initialize(certificatePath, passwordChars, testMode);
             initialized = true;
             return true;
         } catch (Exception e) {
             System.err.println("Error inicializando módulo: " + e.getMessage());
             return false;
+        } finally {
+            Arrays.fill(passwordChars, '\0');
         }
     }
     

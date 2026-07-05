@@ -12,7 +12,6 @@
 
 package uk.chromis.pos.forms;
 
-import uk.chromis.pos.config.ConfiguracionPanel;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
