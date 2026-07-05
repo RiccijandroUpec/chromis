@@ -1,6 +1,7 @@
 -- ============================================================
 -- ChromisPOS Ecuador - Actualizar Menu.Root en base de datos
--- Incluye: Ventas + Administración + Configuración SRI
+-- Incluye: Ventas + Mantenimiento + Administración (SRI, usuarios,
+-- roles y configuración general consolidados en un solo hub)
 -- ============================================================
 -- Ejecutar en la base de datos chromisnewtest (o la que uses)
 -- ============================================================
@@ -30,19 +31,9 @@ group = menu.addGroup("menu.maintenance");
         group.addPanel("products.png", "menu.taxcategories", "uk.chromis.pos.inventory.TaxCategoriesPanel");
         group.addPanel("products.png", "menu.taxes", "uk.chromis.pos.inventory.TaxesPanel");
         group.addPanel("user.png", "menu.customers", "uk.chromis.pos.customers.CustomersPanel");
-        group.addPanel("user.png", "menu.users", "uk.chromis.pos.panels.JPanelUsers");
-        group.addPanel("user.png", "menu.roles", "uk.chromis.pos.panels.JPanelRoles");
         group.addPanel("resources.png", "menu.resources", "uk.chromis.pos.panels.JPanelResources");
 
 // ADMINISTRACION
 group = menu.addGroup("Administración");
-        group.addPanel("dashboard.png", "Dashboard Central", "uk.chromis.pos.panels.JPanelDashboardCentral");
-        group.addPanel("config.png", "Admin Premium", "uk.chromis.pos.panels.JPanelAdminPremium");
-        group.addPanel("config.png", "Admin Central", "uk.chromis.pos.panels.JPanelAdminCentral");
-
-// ECUADOR SRI
-group = menu.addGroup("Configuración ChromisEC");
-        group.addPanel("config.png", "Configuración SRI", "uk.chromis.pos.invoice.forms.InvoiceConfigurationPanel");
-        group.addPanel("sales_print.png", "Gestión Facturas SRI", "uk.chromis.pos.invoice.forms.InvoiceListPanel");
-        group.addPanel("config.png", "menu.configuration", "uk.chromis.pos.config.JPanelConfiguration");'
+        group.addPanel("config.png", "Administración", "uk.chromis.pos.panels.JPanelAdminCentral");'
 );

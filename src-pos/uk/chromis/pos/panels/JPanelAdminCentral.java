@@ -13,8 +13,10 @@ import uk.chromis.pos.forms.JPanelView;
 /**
  * Centralized Administration Panel
  *
- * Tabbed view grouping real functional screens: SRI Config, Invoice Mgmt,
- * Admin Premium, Dashboard, Printer, Employee Presence, Payments.
+ * Single entry point for back-office/admin screens: SRI config, invoicing,
+ * users, roles and general system configuration. Operational screens used
+ * during daily service (products, printer, payments, till closing, etc.)
+ * keep their own direct menu entries and are not duplicated here.
  */
 public class JPanelAdminCentral extends JPanel implements JPanelView {
 
@@ -34,17 +36,9 @@ public class JPanelAdminCentral extends JPanel implements JPanelView {
         String[][] tabsDef = {
             {"Config SRI", "config.png", "uk.chromis.pos.invoice.forms.InvoiceConfigurationPanel"},
             {"Facturas SRI", "sales_print.png", "uk.chromis.pos.invoice.forms.InvoiceListPanel"},
-            {"Admin Premium", "dashboard.png", "uk.chromis.pos.panels.JPanelAdminPremium"},
-            {"Dashboard", "dashboard.png", "uk.chromis.pos.panels.JPanelDashboardCentral"},
-            {"Productos", "products.png", "uk.chromis.pos.inventory.ProductsPanel"},
-            {"Categorias", "products.png", "uk.chromis.pos.inventory.CategoriesPanel"},
-            {"Impuestos", "products.png", "uk.chromis.pos.inventory.TaxesPanel"},
             {"Usuarios", "user.png", "uk.chromis.pos.panels.JPanelUsers"},
-            {"Configuracion", "config.png", "uk.chromis.pos.config.JPanelConfiguration"},
-            {"Impresoras", "printer.png", "uk.chromis.pos.panels.JPanelPrinter"},
-            {"Empleados", "timer.png", "uk.chromis.pos.epm.JPanelEmployeePresence"},
-            {"Pagos", "payments.png", "uk.chromis.pos.panels.JPanelPayments"},
-            {"Cierre Caja", "calculator.png", "uk.chromis.pos.panels.JPanelCloseMoney"}
+            {"Roles", "user.png", "uk.chromis.pos.panels.JPanelRoles"},
+            {"Configuracion", "config.png", "uk.chromis.pos.config.JPanelConfiguration"}
         };
 
         for (String[] tabDef : tabsDef) {

@@ -16,7 +16,6 @@ echo Compilando paneles nuevos...
   src-pos\uk\chromis\pos\panels\JPanelUsers.java ^
   src-pos\uk\chromis\pos\panels\JPanelRoles.java ^
   src-pos\uk\chromis\pos\panels\JPanelAdminCentral.java ^
-  src-pos\uk\chromis\pos\panels\JPanelAdminPremium.java ^
   src-pos\uk\chromis\pos\config\JPanelConfiguration.java ^
   src-pos\uk\chromis\pos\datalogic\DataLogicCustomers.java 2>&1
 
